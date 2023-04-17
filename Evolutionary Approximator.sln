@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Structs", "Structs\Structs.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genetics", "Genetics\Genetics.csproj", "{E3BEAC48-7797-40CC-A933-A7D658E3160F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controls", "Controls\Controls.csproj", "{9BA6398E-F491-4513-A242-1C11BC00BE9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{E3BEAC48-7797-40CC-A933-A7D658E3160F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3BEAC48-7797-40CC-A933-A7D658E3160F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3BEAC48-7797-40CC-A933-A7D658E3160F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BA6398E-F491-4513-A242-1C11BC00BE9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BA6398E-F491-4513-A242-1C11BC00BE9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BA6398E-F491-4513-A242-1C11BC00BE9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BA6398E-F491-4513-A242-1C11BC00BE9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
