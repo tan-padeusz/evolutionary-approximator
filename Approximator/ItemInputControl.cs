@@ -25,9 +25,6 @@ public class ItemInputControl: ApproximatorControl
 
     public void Populate(Array values)
     {
-        foreach (var value in values)
-        {
-            this.ValueControl.Items.Add(value);
-        }
+        this.ValueControl.DataSource = values;
     }
 }
