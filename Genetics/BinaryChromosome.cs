@@ -10,7 +10,7 @@ public class BinaryChromosome
     public BinaryChromosome(ApproximatorJob job)
     {
         var factorCount = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2;
-        var size = factorCount * (1 + 2 * job.PrecisionDigits) * 9;
+        var size = factorCount * (1 + job.PrecisionDigits) * 9;
         var genes = new BinaryGene[size];
         for (var index = 0; index < size; index++) genes[index] = new BinaryGene();
         this.Genes = genes;
@@ -20,12 +20,16 @@ public class BinaryChromosome
     {
         var size = dominant.Genes.Length;
         var genes = new BinaryGene[size];
-        var genesPerFactor = (1 + 2 * job.PrecisionDigits) * 9;
-        for (var index = 0; index < size; index += genesPerFactor)
+        var factorCount = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2;
+        var genesPerFactor = (1 + job.PrecisionDigits) * 9;
+        var mutatedFactorIndex = BinaryChromosome.Random.Next(factorCount);
+        var mutatedIndexes = this.GenerateMutatedIndexes(job.MutationProbability, mutatedFactorIndex * genesPerFactor, genesPerFactor);
+        for (var index = 0; index < size; index++)
         {
-            var mutatedIndexes = this.GenerateMutatedIndexes(job.MutationProbability, index, genesPerFactor);
             var parent = Random.Next(1000) < job.DominantParentGeneStrength ? dominant : recessive;
-            genes[index] = mutatedIndexes.Contains(index) ? parent.Genes[index].Mutated(job) : parent.Genes[index].Identical();
+            genes[index] = mutatedIndexes.Contains(index)
+                ? parent.Genes[index].Mutated(job)
+                : parent.Genes[index].Identical();
         }
         this.Genes = genes;
     }
@@ -50,7 +54,7 @@ public class BinaryChromosome
     {
         var factors = new double[job.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
-        var genesPerFactor = (1 + 2 * job.PrecisionDigits) * 9;
+        var genesPerFactor = (1 + job.PrecisionDigits) * 9;
         for (var degree = 0; degree <= job.MaxPolynomialDegree; degree++)
         {
             var degreeFactors = new double[degree + 1];
@@ -58,11 +62,11 @@ public class BinaryChromosome
             {
                 var value = 0.0;
                 var factorGenes = this.GetGenes(startingIndex, genesPerFactor);
-                var tenPower = job.PrecisionDigits;
+                var tenPower = 0;
                 for (int index = 0; index < genesPerFactor; index += 9)
                 {
                     double delta = Math.Pow(10, tenPower);
-                    for (int geneIndex = index; geneIndex < index + 9; index++)
+                    for (int geneIndex = index; geneIndex < index + 9; geneIndex++)
                         if (factorGenes[geneIndex].Value) value += delta;
                     tenPower--;
                 }
@@ -77,7 +81,7 @@ public class BinaryChromosome
     private BinaryGene[] GetGenes(int from, int count)
     {
         var genes = new BinaryGene[count];
-        for (var index = 0; index < count; index++) genes[index] = this.Genes[index + from];
+        for (var index = 0; index < count; index++) genes[index] = this.Genes[index + from].Identical();
         return genes;
     }
 }

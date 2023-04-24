@@ -9,7 +9,7 @@ public class IntegerChromosome
 
     public IntegerChromosome(ApproximatorJob job)
     {
-        var genesPerFactor = 1 + 2 * job.PrecisionDigits;
+        var genesPerFactor = 1 + job.PrecisionDigits;
         var size = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2 * genesPerFactor;
         var genes = new IntegerGene[size];
         for (var index = 0; index < size; index++) genes[index] = new IntegerGene();
@@ -28,7 +28,7 @@ public class IntegerChromosome
 
         if (Random.Next(1000) < job.MutationProbability)
         {
-            var genesPerFactor = 1 + 2 * job.PrecisionDigits;
+            var genesPerFactor = 1 + job.PrecisionDigits;
             for (var startIndex = 0; startIndex < size; startIndex += genesPerFactor)
             {
                 int mutationIndex = Random.Next(startIndex, startIndex + genesPerFactor);
@@ -51,7 +51,7 @@ public class IntegerChromosome
             {
                 double value = 0;
                 var factorChromosomePart = this.GetGenes(startingIndex, genesPerFactor);
-                int tenPower = job.PrecisionDigits;
+                int tenPower = 0;
                 for (int gene = 0; gene < genesPerFactor; gene++)
                 {
                     value += factorChromosomePart[gene].Value * Math.Pow(10, tenPower);

@@ -44,7 +44,7 @@ public class RealChromosome
             double[] degreeFactors = new double[degree + 1];
             for (int yPower = 0; yPower <= degree; yPower++)
             {
-                degreeFactors[yPower] = this.GetGenes(startingIndex, genesPerFactor)[0].Value;
+                degreeFactors[yPower] = Math.Round(this.GetGenes(startingIndex, genesPerFactor)[0].Value, job.PrecisionDigits);
                 startingIndex += genesPerFactor;
             }
             factors[degree] = degreeFactors;

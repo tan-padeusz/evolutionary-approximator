@@ -9,8 +9,10 @@ public class RealGene
 
     public RealGene(ApproximatorJob job)
     {
-        var maxValue = Math.Pow(10, job.PrecisionDigits);
-        this.Value = Math.Round(RealGene.Random.NextDouble() * 2 * maxValue - maxValue, job.PrecisionDigits);
+        var value = 0.0;
+        for (var tenPower = 0; tenPower >= -job.PrecisionDigits; tenPower--)
+            value += (RealGene.Random.Next(19) - 9) * Math.Pow(10, tenPower);
+        this.Value = value;
     }
 
     private RealGene(double value)
@@ -25,9 +27,7 @@ public class RealGene
 
     public RealGene Mutated(ApproximatorJob job)
     {
-        var constant = Math.Pow(10, -job.PrecisionDigits) * job.MutationDelta;
-        var variable = job.MutationDelta / 100.0 * this.Value;
-        var delta = RealGene.Random.Next() % 2 == 0 ? (constant + variable) : -(constant + variable);
+        var delta = RealGene.Random.NextDouble() * 2 - 1;
         return new RealGene(this.Value + delta);
     }
 }

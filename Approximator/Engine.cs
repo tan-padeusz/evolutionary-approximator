@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.Text;
 using Enums;
 using Genetics;
 using Structs;
@@ -9,13 +11,44 @@ namespace Approximator;
 public class Engine
 {
     private Population CurrentPopulation { get; set; }
+    private ApproximatorForm Form { get; }
     private Individual GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
     private InputPoint[] Points { get; set; }
     private bool Running { get; set; }
-    private Stopwatch Stopwatch { get; } = new Stopwatch();
+    private Stopwatch Stopwatch { get; }
     private int TickCount { get; set; }
     private BackgroundWorker Worker { get; }
+
+    public Engine(ApproximatorForm form)
+    {
+        this.Form = form;
+        this.Running = false;
+        this.Stopwatch = new Stopwatch();
+        this.Worker = this.CreateWorker();
+    }
+
+    private BackgroundWorker CreateWorker()
+    {
+        var worker = new BackgroundWorker();
+        worker.WorkerReportsProgress = true;
+        worker.WorkerSupportsCancellation = true;
+        worker.DoWork += this.WorkerWork;
+        worker.ProgressChanged += this.WorkerProgressChanged;
+        worker.RunWorkerCompleted += this.WorkerWorkCompleted;
+        return worker;
+    }
+    
+    private string FormatTime(long milliseconds)
+    {
+        var seconds = (milliseconds / 1000) % 60;
+        var minutes = milliseconds / 60000;
+
+        var minutesString = minutes < 10 ? $"0{minutes}" : minutes.ToString();
+        var secondsString = seconds < 10 ? $"0{seconds}" : seconds.ToString();
+
+        return $"{minutesString}:{secondsString}";
+    }
 
     private InputPoint[] GeneratePoints(ApproximatorJob job)
     {
@@ -40,6 +73,34 @@ public class Engine
             PointFunction.Trigonometric => (x, y) => 2.0 / 3.0 * Math.Sin(x) * Math.Cos(y) + 1.0 / 3.0 * x * y,
             _ => throw new InvalidEnumArgumentException($"Invalid point function : {job.PointFunction}")
         };
+    }
+
+    public void Start(ApproximatorJob job)
+    {
+        if (this.Running) return;
+        this.Form.ControlTableOutputControl.Clear();
+        this.Running = true;
+        this.Worker.RunWorkerAsync(job);
+    }
+
+    public void Stop()
+    {
+        if (!this.Running) return;
+        this.Worker.CancelAsync();
+        this.Running = false;
+    }
+
+    private void WorkerProgressChanged(object? sender, ProgressChangedEventArgs args)
+    {
+        if (Environment.TickCount - this.TickCount > 1)
+        {
+            this.TickCount = Environment.TickCount;
+            this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual.Error.ToString());
+            this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
+            this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
+            this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
+            this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation.Id + 1).ToString());
+        }
     }
     
     private void WorkerWork(object? sender, DoWorkEventArgs args)
@@ -77,5 +138,19 @@ public class Engine
             
             this.Worker.ReportProgress(0, "update ui");
         }
+    }
+
+    private void WorkerWorkCompleted(object? sender, RunWorkerCompletedEventArgs args)
+    {
+        this.Stopwatch.Stop();
+        StringBuilder builder = new StringBuilder();
+        foreach (InputPoint point in this.Points)
+        {
+            double result = Math.Round(this.GlobalBestIndividual.CalculateFunctionResult(point), 4);
+            double error = Math.Round(Math.Abs(result - point.Z), 4);
+            builder.Append($"[ {point.X} | {point.Y} | {point.Z} ] : [ {result} | {error} ]\n");
+        }
+        builder.Remove(builder.Length - 1, 1);
+        this.Form.ControlTableOutputControl.Text = builder.ToString();
     }
 }

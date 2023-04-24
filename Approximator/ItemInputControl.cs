@@ -23,6 +23,11 @@ public class ItemInputControl: ApproximatorControl
         return new Control[] { this.LabelControl, this.ValueControl };
     }
 
+    public object GetValue()
+    {
+        return this.ValueControl.SelectedItem;
+    }
+
     public void Populate(Array values)
     {
         this.ValueControl.DataSource = values;

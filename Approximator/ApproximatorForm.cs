@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Controls;
 using Enums;
+using Structs;
 
 namespace Approximator;
 
@@ -39,6 +40,7 @@ public class ApproximatorForm: Form
     private ItemInputControl ErrorMetricControl { get; } = new ItemInputControl();
     private ItemInputControl GeneTypeControl { get; } = new ItemInputControl();
     private NumericInputControl MaxPolynomialDegreeControl { get; } = new NumericInputControl();
+    private NumericInputControl MutationDeltaControl { get; } = new NumericInputControl();
     private NumericInputControl MutationProbabilityControl { get; } = new NumericInputControl();
     private ItemInputControl PointFunctionControl { get; } = new ItemInputControl();
     private NumericInputControl PopulationSizeControl { get; } = new NumericInputControl();
@@ -59,9 +61,13 @@ public class ApproximatorForm: Form
     public OutputControl PopulationsCreatedControl { get; } = new OutputControl();
 
     #endregion
+    
+    private Engine Engine { get; }
 
     public ApproximatorForm()
     {
+        this.Engine = new Engine(this);
+        
         this.ConfigureButtons();
         this.ConfigureDecorations();
         this.ConfigureInputControls();
@@ -73,7 +79,7 @@ public class ApproximatorForm: Form
     private void ConfigureButtons()
     {
         this.StartButton.Click += this.StartButtonClick;
-        this.StartButton.Location = new Point(10, 640);
+        this.StartButton.Location = new Point(10, 710);
         this.StartButton.Size = new Size(300, 60);
         this.StartButton.Text = "START";
         this.StartButton.TextAlign = ContentAlignment.MiddleCenter;
@@ -96,12 +102,12 @@ public class ApproximatorForm: Form
         
         this.LeftVerticalLine.BackColor = Color.DarkGray;
         this.LeftVerticalLine.Location = new Point(318, 10);
-        this.LeftVerticalLine.Size = new Size(5, 690);
+        this.LeftVerticalLine.Size = new Size(5, 760);
         this.Controls.Add(this.LeftVerticalLine);
 
         this.RightVerticalLine.BackColor = Color.DarkGray;
         this.RightVerticalLine.Location = new Point(1088, 10);
-        this.RightVerticalLine.Size = new Size(5, 690);
+        this.RightVerticalLine.Size = new Size(5, 760);
         this.Controls.Add(this.RightVerticalLine);
     }
 
@@ -131,6 +137,10 @@ public class ApproximatorForm: Form
         this.MutationProbabilityControl.ConfigureControlConstraints(0, 1000, 10, 10);
         this.Controls.AddRange(this.MutationProbabilityControl.GetControls());
         
+        this.MutationDeltaControl.ConfigureControl("MUTATION DELTA", 10, 640);
+        this.MutationDeltaControl.ConfigureControlConstraints(0, 100, 10, 2);
+        this.Controls.AddRange(this.MutationDeltaControl.GetControls());
+        
         this.PointFunctionControl.ConfigureControl("POINT FUNCTION", 10, 80);
         this.PointFunctionControl.Populate(Enum.GetValues<PointFunction>());
         this.Controls.AddRange(this.PointFunctionControl.GetControls());
@@ -146,9 +156,10 @@ public class ApproximatorForm: Form
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1100, 710);
+        this.ClientSize = new Size(1100, 780);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
+        this.StartPosition = FormStartPosition.CenterScreen;
         this.Text = "EVOLUTIONARY APPROXIMATOR";
     }
 
@@ -183,7 +194,7 @@ public class ApproximatorForm: Form
         this.ControlTableOutputControl.Font = new Font(FontFamily.GenericMonospace, 16F);
         this.ControlTableOutputControl.Location = new Point(330, 260);
         this.ControlTableOutputControl.ReadOnly = true;
-        this.ControlTableOutputControl.Size = new Size(750, 440);
+        this.ControlTableOutputControl.Size = new Size(750, 510);
         this.Controls.Add(this.ControlTableOutputControl);
         
         this.ElapsedTimeControl.ConfigureControl("ELAPSED TIME", 330, 10);
@@ -198,11 +209,24 @@ public class ApproximatorForm: Form
 
     private void StartButtonClick(object? sender, EventArgs args)
     {
-        
+        var job = new ApproximatorJob
+        (
+            this.ContestantsControl.GetValue(),
+            this.DominantParentGeneStrengthControl.GetValue(),
+            (ErrorMetric) this.ErrorMetricControl.GetValue(),
+            (GeneType) this.GeneTypeControl.GetValue(),
+            this.MaxPolynomialDegreeControl.GetValue(),
+            this.MutationDeltaControl.GetValue(),
+            this.MutationProbabilityControl.GetValue(),
+            (PointFunction) this.PointFunctionControl.GetValue(),
+            this.PopulationSizeControl.GetValue(),
+            this.PrecisionDigitsControl.GetValue()
+        );
+        this.Engine.Start(job);
     }
 
     private void StopButtonClick(object? sender, EventArgs args)
     {
-        
+        this.Engine.Stop();
     }
 }
