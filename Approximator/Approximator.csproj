@@ -12,6 +12,7 @@
       <ProjectReference Include="..\Enums\Enums.csproj" />
       <ProjectReference Include="..\Genetics\Genetics.csproj" />
       <ProjectReference Include="..\Structs\Structs.csproj" />
+      <ProjectReference Include="..\Visualisation\Visualisation.csproj" />
     </ItemGroup>
 
 </Project>

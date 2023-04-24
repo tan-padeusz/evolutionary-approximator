@@ -2,6 +2,7 @@
 using Controls;
 using Enums;
 using Structs;
+using Visualisation;
 
 namespace Approximator;
 
@@ -40,7 +41,6 @@ public class ApproximatorForm: Form
     private ItemInputControl ErrorMetricControl { get; } = new ItemInputControl();
     private ItemInputControl GeneTypeControl { get; } = new ItemInputControl();
     private NumericInputControl MaxPolynomialDegreeControl { get; } = new NumericInputControl();
-    private NumericInputControl MutationDeltaControl { get; } = new NumericInputControl();
     private NumericInputControl MutationProbabilityControl { get; } = new NumericInputControl();
     private ItemInputControl PointFunctionControl { get; } = new ItemInputControl();
     private NumericInputControl PopulationSizeControl { get; } = new NumericInputControl();
@@ -61,6 +61,14 @@ public class ApproximatorForm: Form
     public OutputControl PopulationsCreatedControl { get; } = new OutputControl();
 
     #endregion
+
+    #region Visualisation Controls
+
+    public PictureBox Plot { get; } = new PictureBox();
+    public HScrollBar XScrollBar { get; } = new HScrollBar();
+    public VScrollBar YScrollBar { get; } = new VScrollBar();
+
+    #endregion
     
     private Engine Engine { get; }
 
@@ -72,6 +80,7 @@ public class ApproximatorForm: Form
         this.ConfigureDecorations();
         this.ConfigureInputControls();
         this.ConfigureOutputControls();
+        this.ConfigureVisualisationControls();
         
         this.ConfigureForm();
     }
@@ -79,7 +88,7 @@ public class ApproximatorForm: Form
     private void ConfigureButtons()
     {
         this.StartButton.Click += this.StartButtonClick;
-        this.StartButton.Location = new Point(10, 710);
+        this.StartButton.Location = new Point(10, 640);
         this.StartButton.Size = new Size(300, 60);
         this.StartButton.Text = "START";
         this.StartButton.TextAlign = ContentAlignment.MiddleCenter;
@@ -102,12 +111,12 @@ public class ApproximatorForm: Form
         
         this.LeftVerticalLine.BackColor = Color.DarkGray;
         this.LeftVerticalLine.Location = new Point(318, 10);
-        this.LeftVerticalLine.Size = new Size(5, 760);
+        this.LeftVerticalLine.Size = new Size(5, 690);
         this.Controls.Add(this.LeftVerticalLine);
 
         this.RightVerticalLine.BackColor = Color.DarkGray;
         this.RightVerticalLine.Location = new Point(1088, 10);
-        this.RightVerticalLine.Size = new Size(5, 760);
+        this.RightVerticalLine.Size = new Size(5, 690);
         this.Controls.Add(this.RightVerticalLine);
     }
 
@@ -137,10 +146,6 @@ public class ApproximatorForm: Form
         this.MutationProbabilityControl.ConfigureControlConstraints(0, 1000, 10, 10);
         this.Controls.AddRange(this.MutationProbabilityControl.GetControls());
         
-        this.MutationDeltaControl.ConfigureControl("MUTATION DELTA", 10, 640);
-        this.MutationDeltaControl.ConfigureControlConstraints(0, 100, 10, 2);
-        this.Controls.AddRange(this.MutationDeltaControl.GetControls());
-        
         this.PointFunctionControl.ConfigureControl("POINT FUNCTION", 10, 80);
         this.PointFunctionControl.Populate(Enum.GetValues<PointFunction>());
         this.Controls.AddRange(this.PointFunctionControl.GetControls());
@@ -156,7 +161,7 @@ public class ApproximatorForm: Form
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1100, 780);
+        this.ClientSize = new Size(1800, 710);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -207,6 +212,32 @@ public class ApproximatorForm: Form
         this.Controls.AddRange(this.PopulationsCreatedControl.GetControls());
     }
 
+    private void ConfigureVisualisationControls()
+    {
+        this.Plot.Image = new Bitmap(620, 620);
+        this.Plot.Location = new Point(1170, 10);
+        this.Plot.Size = new Size(620, 620);
+        this.Controls.Add(this.Plot);
+        
+        this.XScrollBar.LargeChange = 1;
+        this.XScrollBar.Location = new Point(1170, 640);
+        this.XScrollBar.Maximum = 25;
+        this.XScrollBar.Minimum = 1;
+        this.XScrollBar.Size = new Size(620, 60);
+        this.XScrollBar.SmallChange = 1;
+        this.XScrollBar.Value = 5;
+        this.Controls.Add(this.XScrollBar);
+        
+        this.YScrollBar.LargeChange = 1;
+        this.YScrollBar.Location = new Point(1100, 10);
+        this.YScrollBar.Maximum = 25;
+        this.YScrollBar.Minimum = 1;
+        this.YScrollBar.Size = new Size(60, 620);
+        this.YScrollBar.SmallChange = 1;
+        this.YScrollBar.Value = 5;
+        this.Controls.Add(this.YScrollBar);
+    }
+
     private void StartButtonClick(object? sender, EventArgs args)
     {
         var job = new ApproximatorJob
@@ -216,13 +247,13 @@ public class ApproximatorForm: Form
             (ErrorMetric) this.ErrorMetricControl.GetValue(),
             (GeneType) this.GeneTypeControl.GetValue(),
             this.MaxPolynomialDegreeControl.GetValue(),
-            this.MutationDeltaControl.GetValue(),
             this.MutationProbabilityControl.GetValue(),
             (PointFunction) this.PointFunctionControl.GetValue(),
             this.PopulationSizeControl.GetValue(),
             this.PrecisionDigitsControl.GetValue()
         );
         this.Engine.Start(job);
+        VisualisationUtils.Paint3DFunction(this.Plot);
     }
 
     private void StopButtonClick(object? sender, EventArgs args)
