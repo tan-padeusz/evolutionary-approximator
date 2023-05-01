@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
 using Controls;
 using Enums;
-using Structs;
-using Visualisation;
+using Data;
 
 namespace Approximator;
 
@@ -214,16 +213,16 @@ public class ApproximatorForm: Form
 
     private void ConfigureVisualisationControls()
     {
-        this.Plot.Image = new Bitmap(620, 620);
-        this.Plot.Location = new Point(1170, 10);
-        this.Plot.Size = new Size(620, 620);
+        this.Plot.Image = new Bitmap(620, 650);
+        this.Plot.Location = new Point(1140, 10);
+        this.Plot.Size = new Size(650, 620);
         this.Controls.Add(this.Plot);
         
         this.XScrollBar.LargeChange = 1;
-        this.XScrollBar.Location = new Point(1170, 640);
+        this.XScrollBar.Location = new Point(1140, 670);
         this.XScrollBar.Maximum = 25;
         this.XScrollBar.Minimum = 1;
-        this.XScrollBar.Size = new Size(620, 60);
+        this.XScrollBar.Size = new Size(650, 30);
         this.XScrollBar.SmallChange = 1;
         this.XScrollBar.Value = 5;
         this.Controls.Add(this.XScrollBar);
@@ -232,10 +231,20 @@ public class ApproximatorForm: Form
         this.YScrollBar.Location = new Point(1100, 10);
         this.YScrollBar.Maximum = 25;
         this.YScrollBar.Minimum = 1;
-        this.YScrollBar.Size = new Size(60, 620);
+        this.YScrollBar.Size = new Size(30, 620);
         this.YScrollBar.SmallChange = 1;
         this.YScrollBar.Value = 5;
         this.Controls.Add(this.YScrollBar);
+    }
+
+    public int GetPixelsPerOneX()
+    {
+        return Math.Max(this.XScrollBar.Value, 1);
+    }
+
+    public int GetPixelsPerOneY()
+    {
+        return Math.Max(this.YScrollBar.Value, 1);
     }
 
     private void StartButtonClick(object? sender, EventArgs args)
@@ -253,7 +262,6 @@ public class ApproximatorForm: Form
             this.PrecisionDigitsControl.GetValue()
         );
         this.Engine.Start(job);
-        VisualisationUtils.Paint3DFunction(this.Plot);
     }
 
     private void StopButtonClick(object? sender, EventArgs args)

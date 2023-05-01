@@ -1,11 +1,10 @@
-﻿using Structs;
+﻿using Data;
 
 namespace Genetics;
 
-public class IntegerChromosome
+public class IntegerChromosome: Chromosome
 {
     private IntegerGene[] Genes { get; }
-    private static Random Random { get; } = new Random();
 
     public IntegerChromosome(ApproximatorJob job)
     {
@@ -28,33 +27,30 @@ public class IntegerChromosome
 
         if (Random.Next(1000) < job.MutationProbability)
         {
-            var genesPerFactor = 1 + job.PrecisionDigits;
-            for (var startIndex = 0; startIndex < size; startIndex += genesPerFactor)
-            {
-                int mutationIndex = Random.Next(startIndex, startIndex + genesPerFactor);
-                genes[mutationIndex] = genes[mutationIndex].Mutated(job);
-            }
+            var mutationIndex = Chromosome.Random.Next(size);
+            genes[mutationIndex] = genes[mutationIndex].Mutated();
         }
 
         this.Genes = genes;
     }
 
-    public double[][] Decode(ApproximatorJob job)
+    public override double[][] Decode(ApproximatorJob job)
     {
-        double[][] factors = new double[job.MaxPolynomialDegree + 1][];
-        int startingIndex = 0;
-        int genesPerFactor = job.PrecisionDigits + 1;
-        for (int degree = 0; degree <= job.MaxPolynomialDegree; degree++)
+        var factors = new double[job.MaxPolynomialDegree + 1][];
+        var precisionValue = Math.Pow(10, -job.PrecisionDigits);
+        var startingIndex = 0;
+        var genesPerFactor = job.PrecisionDigits + 1;
+        for (var degree = 0; degree <= job.MaxPolynomialDegree; degree++)
         {
-            double[] degreeFactors = new double[degree + 1];
-            for (int yPower = 0; yPower <= degree; yPower++)
+            var degreeFactors = new double[degree + 1];
+            for (var yPower = 0; yPower <= degree; yPower++)
             {
-                double value = 0;
-                var factorChromosomePart = this.GetGenes(startingIndex, genesPerFactor);
-                int tenPower = 0;
-                for (int gene = 0; gene < genesPerFactor; gene++)
+                var value = 0.0;
+                var tenPower = 0;
+                for (var gene = 0; gene < genesPerFactor; gene++)
                 {
-                    value += factorChromosomePart[gene].Value * Math.Pow(10, tenPower);
+                    // value += this.Genes[startingIndex + gene].Value * Math.Pow(10, tenPower);
+                    value += this.Genes[startingIndex + gene].Value * precisionValue;
                     tenPower--;
                 }
                 degreeFactors[yPower] = Math.Round(value, job.PrecisionDigits);

@@ -1,15 +1,13 @@
 ﻿namespace Genetics;
 
-using Structs;
-
-public class IntegerGene
+public readonly struct IntegerGene
 {
     private static Random Random { get; } = new Random();
     public int Value { get; }
 
     public IntegerGene()
     {
-        this.Value = IntegerGene.Random.Next(19) - 9;
+        this.Value = IntegerGene.Random.Next(3) - 1;
     }
 
     private IntegerGene(int value)
@@ -22,7 +20,7 @@ public class IntegerGene
         return new IntegerGene(this.Value);
     }
 
-    public IntegerGene Mutated(ApproximatorJob job)
+    public IntegerGene Mutated()
     {
         var delta = IntegerGene.Random.Next() % 2 == 0 ? 1 : -1;
         return new IntegerGene(this.Value + delta);

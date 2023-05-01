@@ -1,16 +1,16 @@
-﻿using Structs;
+﻿using Data;
 
 namespace Genetics;
 
-public class BinaryChromosome
+public class BinaryChromosome: Chromosome
 {
     private BinaryGene[] Genes { get; }
-    private static Random Random { get; } = new Random();
 
     public BinaryChromosome(ApproximatorJob job)
     {
         var factorCount = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2;
-        var size = factorCount * (1 + job.PrecisionDigits) * 9;
+        var genesPerFactor = (1 + job.PrecisionDigits) * 9 + 1;
+        var size = factorCount * genesPerFactor;
         var genes = new BinaryGene[size];
         for (var index = 0; index < size; index++) genes[index] = new BinaryGene();
         this.Genes = genes;
@@ -20,41 +20,26 @@ public class BinaryChromosome
     {
         var size = dominant.Genes.Length;
         var genes = new BinaryGene[size];
-        var factorCount = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2;
-        var genesPerFactor = (1 + job.PrecisionDigits) * 9;
-        var mutatedFactorIndex = BinaryChromosome.Random.Next(factorCount);
-        var mutatedIndexes = this.GenerateMutatedIndexes(job.MutationProbability, mutatedFactorIndex * genesPerFactor, genesPerFactor);
         for (var index = 0; index < size; index++)
         {
-            var parent = Random.Next(1000) < job.DominantParentGeneStrength ? dominant : recessive;
-            genes[index] = mutatedIndexes.Contains(index)
-                ? parent.Genes[index].Mutated(job)
-                : parent.Genes[index].Identical();
+            var parent = BinaryChromosome.Random.Next(1000) < job.DominantParentGeneStrength ? dominant : recessive;
+            genes[index] = parent.Genes[index].Identical();
         }
+
+        if (BinaryChromosome.Random.Next(1000) < job.MutationProbability)
+        {
+            var mutationIndex = Chromosome.Random.Next(size);
+            genes[mutationIndex] = genes[mutationIndex].Mutated();
+        }
+        
         this.Genes = genes;
     }
 
-    private int[] GenerateMutatedIndexes(int mutationProbability, int from, int count)
-    {
-        var mutatedCount = mutationProbability / 1000 * count;
-        var mutatedIndexes = new int[mutatedCount];
-        for (int index = 0; index < mutatedCount; index++)
-        {
-            int mutatedIndex;
-            do
-            {
-                mutatedIndex = Random.Next(from, from + count);
-            } while (mutatedIndexes.Contains(mutatedIndex));
-            mutatedIndexes[index] = mutatedIndex;
-        }
-        return mutatedIndexes;
-    }
-
-    public double[][] Decode(ApproximatorJob job)
+    public override double[][] Decode(ApproximatorJob job)
     {
         var factors = new double[job.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
-        var genesPerFactor = (1 + job.PrecisionDigits) * 9;
+        var genesPerFactor = (1 + job.PrecisionDigits) * 9 + 1;
         for (var degree = 0; degree <= job.MaxPolynomialDegree; degree++)
         {
             var degreeFactors = new double[degree + 1];
@@ -63,13 +48,18 @@ public class BinaryChromosome
                 var value = 0.0;
                 var factorGenes = this.GetGenes(startingIndex, genesPerFactor);
                 var tenPower = 0;
-                for (int index = 0; index < genesPerFactor; index += 9)
+                for (var factorGeneIndex = 1; factorGeneIndex < genesPerFactor; factorGeneIndex += 9)
                 {
-                    double delta = Math.Pow(10, tenPower);
-                    for (int geneIndex = index; geneIndex < index + 9; geneIndex++)
-                        if (factorGenes[geneIndex].Value) value += delta;
+                    var sum = 0;
+                    for (var digitGeneIndex = factorGeneIndex; digitGeneIndex < factorGeneIndex + 9; digitGeneIndex++)
+                    {
+                        var gene = factorGenes[digitGeneIndex];
+                        if (gene.Value) sum++;
+                    }
+                    value += sum * Math.Pow(10, tenPower);
                     tenPower--;
                 }
+                if (factorGenes[0].Value) value *= -1;
                 degreeFactors[yPower] = Math.Round(value, job.PrecisionDigits);
                 startingIndex += genesPerFactor;
             }

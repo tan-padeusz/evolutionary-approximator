@@ -1,11 +1,10 @@
-﻿using Structs;
+﻿using Data;
 
 namespace Genetics;
 
-public class RealChromosome
+public class RealChromosome: Chromosome
 {
     private RealGene[] Genes { get; }
-    private static Random Random { get; } = new Random();
     
     public RealChromosome(ApproximatorJob job)
     {
@@ -27,14 +26,14 @@ public class RealChromosome
 
         if (Random.Next(1000) < job.MutationProbability)
         {
-            int mutationPointIndex = Random.Next(size);
+            var mutationPointIndex = Chromosome.Random.Next(size);
             genes[mutationPointIndex] = genes[mutationPointIndex].Mutated(job);
         }
 
         this.Genes = genes;
     }
 
-    public double[][] Decode(ApproximatorJob job)
+    public override double[][] Decode(ApproximatorJob job)
     {
         double[][] factors = new double[job.MaxPolynomialDegree + 1][];
         int startingIndex = 0;
@@ -44,7 +43,7 @@ public class RealChromosome
             double[] degreeFactors = new double[degree + 1];
             for (int yPower = 0; yPower <= degree; yPower++)
             {
-                degreeFactors[yPower] = Math.Round(this.GetGenes(startingIndex, genesPerFactor)[0].Value, job.PrecisionDigits);
+                degreeFactors[yPower] = Math.Round(this.Genes[startingIndex].Value, job.PrecisionDigits);
                 startingIndex += genesPerFactor;
             }
             factors[degree] = degreeFactors;

@@ -1,8 +1,8 @@
-﻿using Structs;
+﻿using Data;
 
 namespace Genetics;
 
-public class BinaryGene
+public readonly struct BinaryGene
 {
     private static Random Random { get; } = new Random();
     public bool Value { get; }
@@ -22,7 +22,7 @@ public class BinaryGene
         return new BinaryGene(this.Value);
     }
 
-    public BinaryGene Mutated(ApproximatorJob job)
+    public BinaryGene Mutated()
     {
         return new BinaryGene(!this.Value);
     }

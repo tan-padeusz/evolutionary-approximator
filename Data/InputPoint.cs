@@ -1,4 +1,4 @@
-﻿namespace Structs;
+﻿namespace Data;
 
 public struct InputPoint
 {

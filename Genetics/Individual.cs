@@ -1,15 +1,32 @@
 ﻿using System.ComponentModel;
 using System.Text;
 using Enums;
-using Structs;
+using Data;
 
 namespace Genetics;
 
-public abstract class Individual
+public class Individual
 {
+    private Chromosome Chromosome { get; }
+    private static IChromosomeFactory ChromosomeFactory { get; set; }
     public double Error { get; protected init; }
-    protected double[][] Factors { get; init; }
+    private double[][] Factors { get; init; }
+    
     private static Func<double, double, double> Metric { get; set; }
+
+    public Individual(ApproximatorJob job, InputPoint[] points)
+    {
+        this.Chromosome = Individual.ChromosomeFactory.NewChromosome(job);
+        this.Factors = this.Chromosome.Decode(job);
+        this.Error = this.EvaluateError(points);
+    }
+
+    public Individual(ApproximatorJob job, InputPoint[] points, Individual[] parents)
+    {
+        this.Chromosome = Individual.ChromosomeFactory.NewChromosome(job, parents[0].Chromosome, parents[1].Chromosome);
+        this.Factors = this.Chromosome.Decode(job);
+        this.Error = this.EvaluateError(points);
+    }
 
     public double CalculateFunctionResult(InputPoint point)
     {
@@ -19,7 +36,7 @@ public abstract class Individual
         return Math.Round(result, 4);
     }
     
-    protected double EvaluateError(InputPoint[] points)
+    private double EvaluateError(InputPoint[] points)
     {
         var error = points.Sum(point => Individual.Metric(this.CalculateFunctionResult(point), point.Z));
         return Math.Round(error / points.Length, 4);
@@ -29,9 +46,17 @@ public abstract class Individual
     {
         return other.Error < this.Error;
     }
-    
-    public static void SetErrorMetric(ApproximatorJob job)
+
+    public static void InitialiseStaticFields(ApproximatorJob job)
     {
+        Individual.ChromosomeFactory = job.GeneType switch
+        {
+            GeneType.Binary => new BinaryChromosomeFactory(),
+            GeneType.Integer => new IntegerChromosomeFactory(),
+            GeneType.Real => new RealChromosomeFactory(),
+            _ => throw new InvalidEnumArgumentException($"Invalid gene type : {job.GeneType}")
+        };
+        
         Individual.Metric = job.ErrorMetric switch
         {
             ErrorMetric.Absolute => (given, expected) => Math.Abs(given - expected),

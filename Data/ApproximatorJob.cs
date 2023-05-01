@@ -1,6 +1,6 @@
 ﻿using Enums;
 
-namespace Structs;
+namespace Data;
 
 public struct ApproximatorJob
 {

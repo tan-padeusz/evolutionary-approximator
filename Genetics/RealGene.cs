@@ -1,18 +1,15 @@
 ﻿namespace Genetics;
 
-using Structs;
+using Data;
 
-public class RealGene
+public readonly struct RealGene
 {
     private static Random Random { get; } = new Random();
     public double Value { get; }
 
     public RealGene(ApproximatorJob job)
     {
-        var value = 0.0;
-        for (var tenPower = 0; tenPower >= -job.PrecisionDigits; tenPower--)
-            value += (RealGene.Random.Next(19) - 9) * Math.Pow(10, tenPower);
-        this.Value = value;
+        this.Value = RealGene.Random.NextDouble() * 2 - 1;
     }
 
     private RealGene(double value)
@@ -27,7 +24,8 @@ public class RealGene
 
     public RealGene Mutated(ApproximatorJob job)
     {
-        var delta = RealGene.Random.NextDouble() * 2 - 1;
+        var delta = 1.0 / Math.Pow(10, job.PrecisionDigits);
+        delta *= RealGene.Random.Next() % 2 == 1 ? -1 : 1;
         return new RealGene(this.Value + delta);
     }
 }
