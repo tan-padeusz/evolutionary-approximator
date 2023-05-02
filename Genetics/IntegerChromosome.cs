@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using Data;
 
 namespace Genetics;
 
@@ -34,6 +35,7 @@ public class IntegerChromosome: Chromosome
         this.Genes = genes;
     }
 
+    [SuppressMessage("ReSharper.DPA", "DPA0001: Memory allocation issues")]
     public override double[][] Decode(ApproximatorJob job)
     {
         var factors = new double[job.MaxPolynomialDegree + 1][];
@@ -46,12 +48,9 @@ public class IntegerChromosome: Chromosome
             for (var yPower = 0; yPower <= degree; yPower++)
             {
                 var value = 0.0;
-                var tenPower = 0;
                 for (var gene = 0; gene < genesPerFactor; gene++)
                 {
-                    // value += this.Genes[startingIndex + gene].Value * Math.Pow(10, tenPower);
                     value += this.Genes[startingIndex + gene].Value * precisionValue;
-                    tenPower--;
                 }
                 degreeFactors[yPower] = Math.Round(value, job.PrecisionDigits);
                 startingIndex += genesPerFactor;
