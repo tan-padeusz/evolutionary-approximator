@@ -30,7 +30,9 @@ public class Chromosome
         
         for (var index = 0; index < size; index++)
         {
-            var parent = Chromosome.Random.Next(1000) < job.DominantParentGeneStrength ? dominant : recessive;
+            var parent =
+                Chromosome.Random.Next(1000) < job.DominantParentGeneStrength
+                    ? dominant : recessive;
             genes[index] = parent.Genes[index].Identical();
         }
 
