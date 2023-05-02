@@ -8,7 +8,6 @@ namespace Genetics;
 public class Individual
 {
     private Chromosome Chromosome { get; }
-    private static IChromosomeFactory ChromosomeFactory { get; set; }
     public double Error { get; protected init; }
     private double[][] Factors { get; init; }
     
@@ -16,15 +15,15 @@ public class Individual
 
     public Individual(ApproximatorJob job, InputPoint[] points)
     {
-        this.Chromosome = Individual.ChromosomeFactory.NewChromosome(job);
-        this.Factors = this.Chromosome.Decode(job);
+        this.Chromosome = new Chromosome();
+        this.Factors = this.Chromosome.Decode();
         this.Error = this.EvaluateError(points);
     }
 
     public Individual(ApproximatorJob job, InputPoint[] points, Individual[] parents)
     {
-        this.Chromosome = Individual.ChromosomeFactory.NewChromosome(job, parents[0].Chromosome, parents[1].Chromosome);
-        this.Factors = this.Chromosome.Decode(job);
+        this.Chromosome = new Chromosome(job, parents[0].Chromosome, parents[1].Chromosome);
+        this.Factors = this.Chromosome.Decode();
         this.Error = this.EvaluateError(points);
     }
 
@@ -49,14 +48,6 @@ public class Individual
 
     public static void InitialiseStaticFields(ApproximatorJob job)
     {
-        Individual.ChromosomeFactory = job.GeneType switch
-        {
-            GeneType.Binary => new BinaryChromosomeFactory(),
-            GeneType.Integer => new IntegerChromosomeFactory(),
-            GeneType.Real => new RealChromosomeFactory(),
-            _ => throw new InvalidEnumArgumentException($"Invalid gene type : {job.GeneType}")
-        };
-        
         Individual.Metric = job.ErrorMetric switch
         {
             ErrorMetric.Absolute => (given, expected) => Math.Abs(given - expected),

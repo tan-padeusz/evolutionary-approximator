@@ -239,12 +239,12 @@ public class ApproximatorForm: Form
 
     public int GetPixelsPerOneX()
     {
-        return Math.Max(this.XScrollBar.Value, 1);
+        return Math.Max(this.XScrollBar.Value, 1) * 10;
     }
 
     public int GetPixelsPerOneY()
     {
-        return Math.Max(this.YScrollBar.Value, 1);
+        return Math.Max(this.YScrollBar.Value, 1) * 10;
     }
 
     private void StartButtonClick(object? sender, EventArgs args)

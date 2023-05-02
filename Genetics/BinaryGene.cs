@@ -2,14 +2,13 @@
 
 namespace Genetics;
 
-public readonly struct BinaryGene
+public class BinaryGene: Gene
 {
-    private static Random Random { get; } = new Random();
     public bool Value { get; }
 
     public BinaryGene()
     {
-        this.Value = BinaryGene.Random.Next() % 2 == 1;
+        this.Value = Gene.Random.Next() % 2 == 1;
     }
     
     private BinaryGene(bool value)
@@ -17,12 +16,12 @@ public readonly struct BinaryGene
         this.Value = value;
     }
 
-    public BinaryGene Identical()
+    public override Gene Identical()
     {
         return new BinaryGene(this.Value);
     }
 
-    public BinaryGene Mutated()
+    public override Gene Mutated(ApproximatorJob job)
     {
         return new BinaryGene(!this.Value);
     }

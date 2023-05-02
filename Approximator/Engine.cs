@@ -62,6 +62,12 @@ public class Engine
         }
         return points;
     }
+
+    private void InitialiseStaticFields(ApproximatorJob job)
+    {
+        Chromosome.InitialiseChromosomeWhatever(job);
+        Individual.InitialiseStaticFields(job);
+    }
     
     private static Func<double, double, double> GetPointFunction(ApproximatorJob job)
     {
@@ -115,9 +121,6 @@ public class Engine
         const double bottomYStep = bottomYBias / (nodesCount - 1.0);
 
         const double range = 0.5 * (nodesCount - 1.0);
-
-        // const int pixelsPerOneX = 50;
-        // const int pixelsPerOneY = 50;
 
         var invertedXScale = leftXStep / pixelsPerOneX;
 
@@ -173,7 +176,7 @@ public class Engine
     {
         ApproximatorJob job = (ApproximatorJob)args.Argument!;
         this.Points = this.GeneratePoints(job);
-        Individual.InitialiseStaticFields(job);
+        this.InitialiseStaticFields(job);
         this.Stopwatch.Restart();
         this.TickCount = Environment.TickCount;
         this.CurrentPopulation = new Population(job, this.Points);

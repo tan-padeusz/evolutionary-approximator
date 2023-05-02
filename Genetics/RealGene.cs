@@ -2,14 +2,13 @@
 
 using Data;
 
-public readonly struct RealGene
+public class RealGene: Gene
 {
-    private static Random Random { get; } = new Random();
     public double Value { get; }
 
-    public RealGene(ApproximatorJob job)
+    public RealGene()
     {
-        this.Value = RealGene.Random.NextDouble() * 2 - 1;
+        this.Value = Gene.Random.NextDouble() * 2 - 1;
     }
 
     private RealGene(double value)
@@ -17,15 +16,15 @@ public readonly struct RealGene
         this.Value = value;
     }
     
-    public RealGene Identical()
+    public override Gene Identical()
     {
         return new RealGene(this.Value);
     }
 
-    public RealGene Mutated(ApproximatorJob job)
+    public override Gene Mutated(ApproximatorJob job)
     {
         var delta = 1.0 / Math.Pow(10, job.PrecisionDigits);
-        delta *= RealGene.Random.Next() % 2 == 1 ? -1 : 1;
+        delta *= Gene.Random.Next() % 2 == 1 ? -1 : 1;
         return new RealGene(this.Value + delta);
     }
 }
