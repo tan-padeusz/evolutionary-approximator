@@ -14,7 +14,7 @@ public class IntegerChromosomeWhatever: ChromosomeWhatever
         return new IntegerGene();
     }
 
-    public override double[][] Decode(Chromosome chromosome)
+    public override double[][] Decode(Gene[] genes)
     {
         var factors = new double[this.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
@@ -24,7 +24,7 @@ public class IntegerChromosomeWhatever: ChromosomeWhatever
             var degreeFactors = new double[degree + 1];
             for (var yPower = 0; yPower <= degree; yPower++)
             {
-                var factorGenes = chromosome.GetGenes(startingIndex, this.GenesPerFactor);
+                var factorGenes = ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
                 var factor = factorGenes.Sum(gene => ((IntegerGene) gene).Value);
                 degreeFactors[yPower] = Math.Round(factor * precisionValue, this.PrecisionDigits);
                 startingIndex += this.GenesPerFactor;

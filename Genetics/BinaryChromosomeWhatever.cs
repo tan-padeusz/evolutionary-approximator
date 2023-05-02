@@ -14,7 +14,7 @@ public class BinaryChromosomeWhatever: ChromosomeWhatever
         return new BinaryGene();
     }
 
-    public override double[][] Decode(Chromosome chromosome)
+    public override double[][] Decode(Gene[] genes)
     {
         var factors = new double[this.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
@@ -25,7 +25,7 @@ public class BinaryChromosomeWhatever: ChromosomeWhatever
             {
                 var factor = 0.0;
                 var tenPower = 0;
-                var factorGenes = chromosome.GetGenes(startingIndex, this.GenesPerFactor);
+                var factorGenes = ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
                 for (var factorGeneIndex = 1; factorGeneIndex < GenesPerFactor; factorGeneIndex += 9)
                 {
                     var digit = 0;

@@ -14,7 +14,7 @@ public class RealChromosomeWhatever: ChromosomeWhatever
         return new RealGene();
     }
 
-    public override double[][] Decode(Chromosome chromosome)
+    public override double[][] Decode(Gene[] genes)
     {
         var factors = new double[this.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
@@ -23,7 +23,7 @@ public class RealChromosomeWhatever: ChromosomeWhatever
             var degreeFactors = new double[degree + 1];
             for (var yPower = 0; yPower <= degree; yPower++)
             {
-                var factorGenes = chromosome.GetGenes(startingIndex, this.GenesPerFactor);
+                var factorGenes = ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
                 var factor = ((RealGene) factorGenes[0]).Value;
                 degreeFactors[yPower] = Math.Round(factor, this.PrecisionDigits);
                 startingIndex += this.GenesPerFactor;

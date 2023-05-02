@@ -17,5 +17,13 @@ public abstract class ChromosomeWhatever
     }
     
     public abstract Gene NewRandomGene();
-    public abstract double[][] Decode(Chromosome chromosome);
+    public abstract double[][] Decode(Gene[] genes);
+
+    protected static Gene[] GetPart(Gene[] source, int from, int count)
+    {
+        var target = new Gene[count];
+        for (var index = 0; index < count; index++)
+            target[index] = source[from + index];
+        return target;
+    }
 }

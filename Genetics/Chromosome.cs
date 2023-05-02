@@ -47,17 +47,7 @@ public class Chromosome
 
     public double[][] Decode()
     {
-        return Chromosome.ChromosomeWhatever.Decode(this);
-    }
-
-    public Gene[] GetGenes(int from, int count)
-    {
-        var genes = new Gene[count];
-
-        for (var index = 0; index < count; index++)
-            genes[index] = this.Genes[index + from];
-
-        return genes;
+        return Chromosome.ChromosomeWhatever.Decode(this.Genes);
     }
 
     public static void InitialiseChromosomeWhatever(ApproximatorJob job)
