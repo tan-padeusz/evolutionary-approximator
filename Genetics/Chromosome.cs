@@ -8,7 +8,7 @@ public class Chromosome
 {
     private static ChromosomeWhatever ChromosomeWhatever { get; set; }
     private Gene[] Genes { get; }
-    protected static Random Random { get; } = new Random();
+    private static Random Random { get; } = new Random();
     
     public Chromosome()
     {

@@ -66,7 +66,7 @@ public class Engine
     private void InitialiseStaticFields(ApproximatorJob job)
     {
         Chromosome.InitialiseChromosomeWhatever(job);
-        Individual.InitialiseStaticFields(job);
+        Individual.InitialiseMetric(job);
     }
     
     private static Func<double, double, double> GetPointFunction(ApproximatorJob job)

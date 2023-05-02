@@ -23,7 +23,8 @@ public class RealChromosomeWhatever: ChromosomeWhatever
             var degreeFactors = new double[degree + 1];
             for (var yPower = 0; yPower <= degree; yPower++)
             {
-                var factorGenes = ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
+                var factorGenes =
+                    ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
                 var factor = ((RealGene) factorGenes[0]).Value;
                 degreeFactors[yPower] = Math.Round(factor, this.PrecisionDigits);
                 startingIndex += this.GenesPerFactor;

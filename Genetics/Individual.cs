@@ -8,8 +8,8 @@ namespace Genetics;
 public class Individual
 {
     private Chromosome Chromosome { get; }
-    public double Error { get; protected init; }
-    private double[][] Factors { get; init; }
+    public double Error { get; }
+    private double[][] Factors { get; }
     
     private static Func<double, double, double> Metric { get; set; }
 
@@ -46,7 +46,7 @@ public class Individual
         return other.Error < this.Error;
     }
 
-    public static void InitialiseStaticFields(ApproximatorJob job)
+    public static void InitialiseMetric(ApproximatorJob job)
     {
         Individual.Metric = job.ErrorMetric switch
         {
