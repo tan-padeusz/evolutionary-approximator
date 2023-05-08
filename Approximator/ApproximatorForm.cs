@@ -88,13 +88,13 @@ public class ApproximatorForm: Form
     {
         this.StartButton.Click += this.StartButtonClick;
         this.StartButton.Location = new Point(10, 640);
-        this.StartButton.Size = new Size(300, 60);
+        this.StartButton.Size = new Size(400, 60);
         this.StartButton.Text = "START";
         this.StartButton.TextAlign = ContentAlignment.MiddleCenter;
         this.Controls.Add(this.StartButton);
 
         this.StopButton.Click += this.StopButtonClick;
-        this.StopButton.Location = new Point(950, 10);
+        this.StopButton.Location = new Point(1050, 10);
         this.StopButton.Size = new Size(130, 130);
         this.StopButton.Text = "STOP";
         this.StopButton.TextAlign = ContentAlignment.MiddleCenter;
@@ -104,17 +104,17 @@ public class ApproximatorForm: Form
     private void ConfigureDecorations()
     {
         this.HorizontalLine.BackColor = Color.DarkGray;
-        this.HorizontalLine.Location = new Point(330, 218);
+        this.HorizontalLine.Location = new Point(430, 218);
         this.HorizontalLine.Size = new Size(750, 5);
         this.Controls.Add(this.HorizontalLine);
         
         this.LeftVerticalLine.BackColor = Color.DarkGray;
-        this.LeftVerticalLine.Location = new Point(318, 10);
+        this.LeftVerticalLine.Location = new Point(418, 10);
         this.LeftVerticalLine.Size = new Size(5, 690);
         this.Controls.Add(this.LeftVerticalLine);
 
         this.RightVerticalLine.BackColor = Color.DarkGray;
-        this.RightVerticalLine.Location = new Point(1088, 10);
+        this.RightVerticalLine.Location = new Point(1188, 10);
         this.RightVerticalLine.Size = new Size(5, 690);
         this.Controls.Add(this.RightVerticalLine);
     }
@@ -160,7 +160,7 @@ public class ApproximatorForm: Form
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1800, 710);
+        this.ClientSize = new Size(1900, 710);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -169,11 +169,11 @@ public class ApproximatorForm: Form
 
     private void ConfigureOutputControls()
     {
-        this.AverageErrorControl.ConfigureControl("AVERAGE ERROR", 640, 10);
+        this.AverageErrorControl.ConfigureControl("AVERAGE ERROR", 740, 10);
         this.Controls.AddRange(this.AverageErrorControl.GetControls());
 
         this.BestFunctionControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.BestFunctionControl.Location = new Point(330, 150);
+        this.BestFunctionControl.Location = new Point(430, 150);
         this.BestFunctionControl.Size = new Size(750, 30);
         this.BestFunctionControl.Text = "BEST FUNCTION";
         this.BestFunctionControl.TextAlign = ContentAlignment.MiddleLeft;
@@ -181,14 +181,14 @@ public class ApproximatorForm: Form
 
         this.BestFunctionOutputControl.BackColor = Color.White;
         this.BestFunctionOutputControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.BestFunctionOutputControl.Location = new Point(330, 180);
+        this.BestFunctionOutputControl.Location = new Point(430, 180);
         this.BestFunctionOutputControl.Multiline = false;
         this.BestFunctionOutputControl.ReadOnly = true;
         this.BestFunctionOutputControl.Size = new Size(750, 30);
         this.Controls.Add(this.BestFunctionOutputControl);
 
         this.ControlTableControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.ControlTableControl.Location = new Point(330, 230);
+        this.ControlTableControl.Location = new Point(430, 230);
         this.ControlTableControl.Size = new Size(750, 30);
         this.ControlTableControl.Text = "[ X | Y | Z ] : [ RESULT | ERROR ]";
         this.ControlTableControl.TextAlign = ContentAlignment.MiddleLeft;
@@ -196,44 +196,46 @@ public class ApproximatorForm: Form
 
         this.ControlTableOutputControl.BackColor = Color.White;
         this.ControlTableOutputControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.ControlTableOutputControl.Location = new Point(330, 260);
+        this.ControlTableOutputControl.Location = new Point(430, 260);
         this.ControlTableOutputControl.ReadOnly = true;
         this.ControlTableOutputControl.Size = new Size(750, 510);
         this.Controls.Add(this.ControlTableOutputControl);
         
-        this.ElapsedTimeControl.ConfigureControl("ELAPSED TIME", 330, 10);
+        this.ElapsedTimeControl.ConfigureControl("ELAPSED TIME", 430, 10);
         this.Controls.AddRange(this.ElapsedTimeControl.GetControls());
         
-        this.LastImprovementControl.ConfigureControl("LAST IMPROVEMENT", 640, 80);
+        this.LastImprovementControl.ConfigureControl("LAST IMPROVEMENT", 740, 80);
         this.Controls.AddRange(this.LastImprovementControl.GetControls());
         
-        this.PopulationsCreatedControl.ConfigureControl("POPULATIONS CREATED", 330, 80);
+        this.PopulationsCreatedControl.ConfigureControl("POPULATIONS CREATED", 430, 80);
         this.Controls.AddRange(this.PopulationsCreatedControl.GetControls());
     }
 
     private void ConfigureVisualisationControls()
     {
         this.Plot.Image = new Bitmap(620, 650);
-        this.Plot.Location = new Point(1140, 10);
+        this.Plot.Location = new Point(1240, 10);
         this.Plot.Size = new Size(650, 620);
         this.Controls.Add(this.Plot);
         
         this.XScrollBar.LargeChange = 1;
-        this.XScrollBar.Location = new Point(1140, 670);
+        this.XScrollBar.Location = new Point(1240, 670);
         this.XScrollBar.Maximum = 25;
         this.XScrollBar.Minimum = 1;
         this.XScrollBar.Size = new Size(650, 30);
         this.XScrollBar.SmallChange = 1;
         this.XScrollBar.Value = 5;
+        this.XScrollBar.ValueChanged += this.ScaleScrollbarValueChange;
         this.Controls.Add(this.XScrollBar);
         
         this.YScrollBar.LargeChange = 1;
-        this.YScrollBar.Location = new Point(1100, 10);
+        this.YScrollBar.Location = new Point(1200, 10);
         this.YScrollBar.Maximum = 25;
         this.YScrollBar.Minimum = 1;
         this.YScrollBar.Size = new Size(30, 620);
         this.YScrollBar.SmallChange = 1;
-        this.YScrollBar.Value = 5;
+        this.YScrollBar.Value = 20;
+        this.YScrollBar.ValueChanged += this.ScaleScrollbarValueChange;
         this.Controls.Add(this.YScrollBar);
     }
 
@@ -244,7 +246,12 @@ public class ApproximatorForm: Form
 
     public int GetPixelsPerOneY()
     {
-        return Math.Max(this.YScrollBar.Value, 1) * 10;
+        return Math.Max(this.YScrollBar.Maximum - this.YScrollBar.Value + 1, 1) * 10;
+    }
+
+    private void ScaleScrollbarValueChange(object? sender, EventArgs args)
+    {
+        this.Engine.VisualiseSolution();
     }
 
     private void StartButtonClick(object? sender, EventArgs args)

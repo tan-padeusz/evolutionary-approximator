@@ -9,11 +9,11 @@ namespace Approximator;
 
 public class Engine
 {
-    private Population CurrentPopulation { get; set; }
+    private Population? CurrentPopulation { get; set; }
     private ApproximatorForm Form { get; }
-    private Individual GlobalBestIndividual { get; set; }
+    private Individual? GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
-    private InputPoint[] Points { get; set; }
+    private InputPoint[]? Points { get; set; }
     private bool Running { get; set; }
     private Stopwatch Stopwatch { get; }
     private int TickCount { get; set; }
@@ -95,7 +95,14 @@ public class Engine
         this.Running = false;
     }
 
-    private void VisualiseFunction(int pixelsPerOneX, int pixelsPerOneY)
+    public void VisualiseSolution()
+    {
+        if (this.Running) return;
+        if (this.GlobalBestIndividual == null || this.Points == null) return;
+        this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
+    }
+    
+    private void VisualiseSolution(int pixelsPerOneX, int pixelsPerOneY)
     {
         var graphics = Graphics.FromImage(this.Form.Plot.Image);
         graphics.Clear(Color.Black);
@@ -158,6 +165,22 @@ public class Engine
         this.Form.Plot.Refresh();
     }
 
+    private void UpdateInterface()
+    {
+        if (Environment.TickCount - this.TickCount <= 1) return;
+        var thread = new Thread(() =>
+        {
+            this.TickCount = Environment.TickCount;
+            this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual!.Error.ToString());
+            this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
+            this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
+            this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
+            this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation!.Id + 1).ToString());
+            this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
+        });
+        thread.Start();
+    }
+
     private void WorkerProgressChanged(object? sender, ProgressChangedEventArgs args)
     {
         if (Environment.TickCount - this.TickCount > 1)
@@ -168,7 +191,7 @@ public class Engine
             this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
             this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
             this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation.Id + 1).ToString());
-            this.VisualiseFunction(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
+            this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
         }
     }
     
@@ -193,7 +216,8 @@ public class Engine
                 this.LastImprovement = this.CurrentPopulation.Id;
             }
             
-            this.Worker.ReportProgress(0, "update ui");
+            // this.Worker.ReportProgress(0, "update ui");
+            this.UpdateInterface();
         }
     }
 
