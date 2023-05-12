@@ -86,8 +86,7 @@ public class Engine
         if (this.Running) return;
         this.Form.ControlTableOutputControl.Clear();
         this.Running = true;
-        // this.Worker.RunWorkerAsync(job);
-        this.Approximate(job);
+        this.Worker.RunWorkerAsync(job);
     }
 
     public void Stop()
@@ -167,30 +166,6 @@ public class Engine
         this.Form.Plot.Refresh();
     }
 
-    private void UpdateInterface()
-    {
-        // if (Environment.TickCount - this.TickCount <= 1) return;
-        // var thread = new Thread(() =>
-        // {
-        //     this.TickCount = Environment.TickCount;
-        //     this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual!.Error.ToString());
-        //     this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
-        //     this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
-        //     this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
-        //     this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation!.Id + 1).ToString());
-        //     this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
-        // });
-        // thread.Start();
-        if (Environment.TickCount - this.TickCount <= 1) return;
-        this.TickCount = Environment.TickCount;
-        this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual!.Error.ToString());
-        this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
-        this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
-        this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
-        this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation!.Id + 1).ToString());
-        this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
-    }
-
     private void WorkerProgressChanged(object? sender, ProgressChangedEventArgs args)
     {
         if (Environment.TickCount - this.TickCount > 1)
@@ -205,35 +180,6 @@ public class Engine
         }
     }
 
-    private void Approximate(ApproximatorJob job)
-    {
-        var thread = new Thread(() =>
-        {
-            this.Points = this.GeneratePoints(job);
-            this.InitialiseStaticFields(job);
-            this.Stopwatch.Restart();
-            this.TickCount = Environment.TickCount;
-            this.CurrentPopulation = new Population(job, this.Points);
-            this.GlobalBestIndividual = this.CurrentPopulation.BestIndividual;
-            this.LastImprovement = this.CurrentPopulation.Id;
-        
-            while (this.Running && !this.Worker.CancellationPending)
-            {
-                this.CurrentPopulation = new Population(job, this.Points, this.CurrentPopulation);
-            
-                if (this.GlobalBestIndividual.IsWorseThan(this.CurrentPopulation.BestIndividual))
-                {
-                    this.GlobalBestIndividual = this.CurrentPopulation.BestIndividual;
-                    this.LastImprovement = this.CurrentPopulation.Id;
-                }
-            
-                // this.Worker.ReportProgress(0, "update ui");
-                this.UpdateInterface();
-            }
-        });
-        thread.Start();
-    }
-    
     private void WorkerWork(object? sender, DoWorkEventArgs args)
     {
         ApproximatorJob job = (ApproximatorJob)args.Argument!;
@@ -255,8 +201,7 @@ public class Engine
                 this.LastImprovement = this.CurrentPopulation.Id;
             }
             
-            // this.Worker.ReportProgress(0, "update ui");
-            this.UpdateInterface();
+            this.Worker.ReportProgress(0, "update ui");
         }
     }
 

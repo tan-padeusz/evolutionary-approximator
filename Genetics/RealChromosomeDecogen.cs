@@ -2,31 +2,31 @@
 
 namespace Genetics;
 
-public class IntegerChromosomeWhatever: ChromosomeWhatever
+public class RealChromosomeDecogen: ChromosomeDecogen
 {
-    public IntegerChromosomeWhatever(ApproximatorJob job) : base(job)
+    public RealChromosomeDecogen(ApproximatorJob job) : base(job)
     {
-        this.GenesPerFactor = job.PrecisionDigits + 1;
+        this.GenesPerFactor = 1;
     }
 
     public override Gene NewRandomGene()
     {
-        return new IntegerGene();
+        return new RealGene();
     }
 
     public override double[][] Decode(Gene[] genes)
     {
         var factors = new double[this.MaxPolynomialDegree + 1][];
         var startingIndex = 0;
-        var precisionValue = Math.Pow(10, -this.PrecisionDigits);
         for (var degree = 0; degree <= this.MaxPolynomialDegree; degree++)
         {
             var degreeFactors = new double[degree + 1];
             for (var yPower = 0; yPower <= degree; yPower++)
             {
-                var factorGenes = ChromosomeWhatever.GetPart(genes, startingIndex, this.GenesPerFactor);
-                var factor = factorGenes.Sum(gene => ((IntegerGene) gene).Value);
-                degreeFactors[yPower] = Math.Round(factor * precisionValue, this.PrecisionDigits);
+                var factorGenes =
+                    ChromosomeDecogen.GetPart(genes, startingIndex, this.GenesPerFactor);
+                var factor = ((RealGene) factorGenes[0]).Value;
+                degreeFactors[yPower] = Math.Round(factor, this.PrecisionDigits);
                 startingIndex += this.GenesPerFactor;
             }
             factors[degree] = degreeFactors;

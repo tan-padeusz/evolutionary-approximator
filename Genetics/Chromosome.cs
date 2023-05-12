@@ -6,13 +6,13 @@ namespace Genetics;
 
 public class Chromosome
 {
-    private static ChromosomeWhatever ChromosomeWhatever { get; set; }
+    private static ChromosomeDecogen ChromosomeDecogen { get; set; }
     private Gene[] Genes { get; }
     private static Random Random { get; } = new Random();
     
     public Chromosome()
     {
-        var whatever = Chromosome.ChromosomeWhatever;
+        var whatever = Chromosome.ChromosomeDecogen;
         var size = whatever.FactorCount * whatever.GenesPerFactor;
         var genes = new Gene[size];
         
@@ -24,8 +24,8 @@ public class Chromosome
 
     public Chromosome(ApproximatorJob job, Chromosome dominant, Chromosome recessive)
     {
-        var whatever = Chromosome.ChromosomeWhatever;
-        var size = whatever.FactorCount * whatever.GenesPerFactor;
+        var decogen = Chromosome.ChromosomeDecogen;
+        var size = decogen.FactorCount * decogen.GenesPerFactor;
         var genes = new Gene[size];
         
         for (var index = 0; index < size; index++)
@@ -47,16 +47,16 @@ public class Chromosome
 
     public double[][] Decode()
     {
-        return Chromosome.ChromosomeWhatever.Decode(this.Genes);
+        return Chromosome.ChromosomeDecogen.Decode(this.Genes);
     }
 
     public static void InitialiseChromosomeWhatever(ApproximatorJob job)
     {
-        Chromosome.ChromosomeWhatever= job.GeneType switch
+        Chromosome.ChromosomeDecogen= job.GeneType switch
         {
-            GeneType.Binary => new BinaryChromosomeWhatever(job),
-            GeneType.Integer => new IntegerChromosomeWhatever(job),
-            GeneType.Real => new RealChromosomeWhatever(job),
+            GeneType.Binary => new BinaryChromosomeDecogen(job),
+            GeneType.Integer => new IntegerChromosomeDecogen(job),
+            GeneType.Real => new RealChromosomeDecogen(job),
             _ => throw new InvalidEnumArgumentException($"Invalid gene type : {job.GeneType}")
         };
     }

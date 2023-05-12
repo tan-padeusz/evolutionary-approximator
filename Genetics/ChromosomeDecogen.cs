@@ -2,14 +2,15 @@
 
 namespace Genetics;
 
-public abstract class ChromosomeWhatever
+// decogen = decoder + generator
+public abstract class ChromosomeDecogen
 {
     public int FactorCount { get; }
     public int GenesPerFactor { get; protected init; }
     protected int MaxPolynomialDegree { get; }
     protected int PrecisionDigits { get; }
 
-    protected ChromosomeWhatever(ApproximatorJob job)
+    protected ChromosomeDecogen(ApproximatorJob job)
     {
         this.FactorCount = (job.MaxPolynomialDegree + 1) * (job.MaxPolynomialDegree + 2) / 2;
         this.MaxPolynomialDegree = job.MaxPolynomialDegree;
