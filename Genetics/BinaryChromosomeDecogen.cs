@@ -19,9 +19,7 @@ public class BinaryChromosomeDecogen: ChromosomeDecogen
 
     private double[] CreateRootArray()
     {
-        var size = 1;
-        for (var index = 1; index < this.GenesPerFactor; index++)
-            size += index;
+        var size = this.GenesPerFactor * (this.GenesPerFactor - 1) / 2;
         var rootArray = new double[size];
         for (var index = 0; index < size; index++)
             rootArray[index] = Math.Cbrt(index);
