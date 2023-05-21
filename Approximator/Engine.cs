@@ -5,16 +5,17 @@ using System.Text;
 using Enums;
 using Genetics;
 using Data;
+using Point = Data.Point;
 
 namespace Approximator;
 
 public class Engine
 {
     private Population? CurrentPopulation { get; set; }
-    private ApproximatorForm Form { get; }
+    // private ApproximatorForm Form { get; }
     private Individual? GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
-    private InputPoint[]? Points { get; set; }
+    public Point[]? Points { get; private set; }
     private bool Running { get; set; }
     private Stopwatch Stopwatch { get; }
     private int TickCount { get; set; }
@@ -22,7 +23,7 @@ public class Engine
 
     public Engine(ApproximatorForm form)
     {
-        this.Form = form;
+        // this.Form = form;
         this.Running = false;
         this.Stopwatch = new Stopwatch();
         this.Worker = this.CreateWorker();
@@ -50,17 +51,31 @@ public class Engine
         return $"{minutesString}:{secondsString}";
     }
 
-    private InputPoint[] GeneratePoints(ApproximatorJob job)
+    // private Point[] GeneratePoints(ApproximatorJob job)
+    // {
+    //     var n = 5;
+    //     var points = new Point[n * n];
+    //     var index = 0;
+    //     var function = Engine.GetPointFunction(job);
+    //     for (var x = 0.0; x < n; x++) for (var y = 0.0; y < n; y++)
+    //     {
+    //         var z = Math.Round(function(x, y), 4);
+    //         points[index++] = new Point(x, y, z);
+    //     }
+    //     return points;
+    // }
+    public Point[] GeneratePoints(int pointNumber, int precisionDigits)
     {
-        var n = 5;
-        var points = new InputPoint[n * n];
-        var index = 0;
-        var function = Engine.GetPointFunction(job);
-        for (var x = 0.0; x < n; x++) for (var y = 0.0; y < n; y++)
+        var points = new Point[pointNumber];
+        var random = new Random();
+        for (var index = 0; index < pointNumber; index++)
         {
-            var z = Math.Round(function(x, y), 4);
-            points[index++] = new InputPoint(x, y, z);
+            var x = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
+            var y = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
+            var z = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
+            points[index] = new Point(x, y, z);
         }
+        this.Points = points;
         return points;
     }
 
@@ -84,7 +99,7 @@ public class Engine
     public void Start(ApproximatorJob job)
     {
         if (this.Running) return;
-        this.Form.ControlTableOutputControl.Clear();
+        // this.Form.ControlTableOutputControl.Clear();
         this.Running = true;
         this.Worker.RunWorkerAsync(job);
     }
@@ -100,13 +115,13 @@ public class Engine
     {
         if (this.Running) return;
         if (this.GlobalBestIndividual == null || this.Points == null) return;
-        this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
+        // this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
     }
     
     private void VisualiseSolution(int pixelsPerOneX, int pixelsPerOneY)
     {
-        var graphics = Graphics.FromImage(this.Form.Plot.Image);
-        graphics.Clear(Color.Black);
+        // var graphics = Graphics.FromImage(this.Form.Plot.Image);
+        // graphics.Clear(Color.Black);
 
         const int nodesCount = 31;
         
@@ -139,10 +154,10 @@ public class Engine
         {
             i = pixelsFromLeft + rightXBias + (int) (leftXStep * p - rightXStep * q);
             j = pixelsFromTop + (int) (topYStep * p + bottomYStep * q);
-            graphics.FillEllipse(Brushes.Blue, i - 3, j - 1, 6, 2);
+            // graphics.FillEllipse(Brushes.Blue, i - 3, j - 1, 6, 2);
         }
         
-        graphics.DrawLine(Pens.Gray, centerX, centerY - 300, centerX, centerY);
+        // graphics.DrawLine(Pens.Gray, centerX, centerY - 300, centerX, centerY);
         var (previousI, previousJ) = (centerX, centerY);
 
         var xs = new int[nodesCount];
@@ -154,36 +169,36 @@ public class Engine
             j = pixelsFromTop + (int) (topYStep * p + bottomYStep * q);
             var x = invertedXScale * (p - range);
             var y = invertedXScale * (q - range);
-            var z = this.GlobalBestIndividual.CalculateFunctionResult(new InputPoint(x, y, 0));
+            var z = this.GlobalBestIndividual.CalculateFunctionResult(new Point(x, y, 0));
             var k = j - (int) (pixelsPerOneY * z);
-            if (p > 0) graphics.DrawLine(Pens.Red, previousI, previousJ, i, k);
-            if (q > 0) graphics.DrawLine(Pens.Red, xs[p], ys[p], i, k);
+            // if (p > 0) graphics.DrawLine(Pens.Red, previousI, previousJ, i, k);
+            // if (q > 0) graphics.DrawLine(Pens.Red, xs[p], ys[p], i, k);
             previousI = i;
             previousJ = k;
             xs[p] = i;
             ys[p] = k;
         }
-        this.Form.Plot.Refresh();
+        // this.Form.Plot.Refresh();
     }
 
     private void WorkerProgressChanged(object? sender, ProgressChangedEventArgs args)
     {
         if (Environment.TickCount - this.TickCount > 1)
         {
-            this.TickCount = Environment.TickCount;
-            this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual.Error.ToString());
-            this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
-            this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
-            this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
-            this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation.Id + 1).ToString());
-            this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
+            // this.TickCount = Environment.TickCount;
+            // this.Form.AverageErrorControl.SetValue(this.GlobalBestIndividual.Error.ToString());
+            // this.Form.BestFunctionOutputControl.Text = this.GlobalBestIndividual.ToString();
+            // this.Form.ElapsedTimeControl.SetValue(this.FormatTime(this.Stopwatch.ElapsedMilliseconds));
+            // this.Form.LastImprovementControl.SetValue(this.LastImprovement.ToString());
+            // this.Form.PopulationsCreatedControl.SetValue((this.CurrentPopulation.Id + 1).ToString());
+            // this.VisualiseSolution(this.Form.GetPixelsPerOneX(), this.Form.GetPixelsPerOneY());
         }
     }
 
     private void WorkerWork(object? sender, DoWorkEventArgs args)
     {
         ApproximatorJob job = (ApproximatorJob)args.Argument!;
-        this.Points = this.GeneratePoints(job);
+        // this.Points = this.GeneratePoints(job);
         this.InitialiseStaticFields(job);
         this.Stopwatch.Restart();
         this.TickCount = Environment.TickCount;
@@ -209,13 +224,13 @@ public class Engine
     {
         this.Stopwatch.Stop();
         StringBuilder builder = new StringBuilder();
-        foreach (InputPoint point in this.Points)
+        foreach (Point point in this.Points)
         {
             double result = Math.Round(this.GlobalBestIndividual.CalculateFunctionResult(point), 4);
             double error = Math.Round(Math.Abs(result - point.Z), 4);
             builder.Append($"[ {point.X} | {point.Y} | {point.Z} ] : [ {result} | {error} ]\n");
         }
         builder.Remove(builder.Length - 1, 1);
-        this.Form.ControlTableOutputControl.Text = builder.ToString();
+        // this.Form.ControlTableOutputControl.Text = builder.ToString();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Data;
+using Point = Data.Point;
 
 namespace Genetics;
 
@@ -15,14 +16,14 @@ public class Population
         set => this.Individuals[index] = value;
     }
 
-    public Population(ApproximatorJob job, InputPoint[] points)
+    public Population(ApproximatorJob job, Point[] points)
     {
         this.Id = 0;
         this.Individuals = Population.GeneratePopulation(job, points);
         this.BestIndividual = this.FindBestIndividual();
     }
     
-    public Population(ApproximatorJob job, InputPoint[] points, Population previousPopulation)
+    public Population(ApproximatorJob job, Point[] points, Population previousPopulation)
     {
         this.Id = previousPopulation.Id + 1;
         this.Individuals = Population.GeneratePopulation(job, points, previousPopulation);
@@ -37,7 +38,7 @@ public class Population
         return bestIndividual;
     }
     
-    private static Individual[] GeneratePopulation(ApproximatorJob job, InputPoint[] points)
+    private static Individual[] GeneratePopulation(ApproximatorJob job, Point[] points)
     {
         var individuals = new Individual[job.PopulationSize];
         Parallel.For(0, job.PopulationSize, index =>
@@ -47,7 +48,7 @@ public class Population
         return individuals;
     }
 
-    private static Individual[] GeneratePopulation(ApproximatorJob job, InputPoint[] points, Population previousPopulation)
+    private static Individual[] GeneratePopulation(ApproximatorJob job, Point[] points, Population previousPopulation)
     {
         var individuals = new Individual[job.PopulationSize];
         Parallel.For(0, job.PopulationSize, index =>

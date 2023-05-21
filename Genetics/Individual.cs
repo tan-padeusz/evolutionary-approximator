@@ -2,6 +2,7 @@
 using System.Text;
 using Enums;
 using Data;
+using Point = Data.Point;
 
 namespace Genetics;
 
@@ -13,21 +14,21 @@ public class Individual
     
     private static Func<double, double, double> Metric { get; set; }
 
-    public Individual(ApproximatorJob job, InputPoint[] points)
+    public Individual(ApproximatorJob job, Point[] points)
     {
         this.Chromosome = new Chromosome();
         this.Factors = this.Chromosome.Decode();
         this.Error = this.EvaluateError(points);
     }
 
-    public Individual(ApproximatorJob job, InputPoint[] points, Individual[] parents)
+    public Individual(ApproximatorJob job, Point[] points, Individual[] parents)
     {
         this.Chromosome = new Chromosome(job, parents[0].Chromosome, parents[1].Chromosome);
         this.Factors = this.Chromosome.Decode();
         this.Error = this.EvaluateError(points);
     }
 
-    public double CalculateFunctionResult(InputPoint point)
+    public double CalculateFunctionResult(Point point)
     {
         var result = 0.0;
         for (var degree = 0; degree < this.Factors.Length; degree++) for (var yPower = 0; yPower <= degree; yPower++)
@@ -35,7 +36,7 @@ public class Individual
         return Math.Round(result, 4);
     }
     
-    private double EvaluateError(InputPoint[] points)
+    private double EvaluateError(Point[] points)
     {
         var error = points.Sum(point => Individual.Metric(this.CalculateFunctionResult(point), point.Z));
         return Math.Round(error / points.Length, 4);

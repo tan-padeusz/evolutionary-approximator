@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
-using Controls;
+using System.Text;
 using Enums;
 using Data;
+using Point = System.Drawing.Point;
 
 namespace Approximator;
 
@@ -17,236 +18,374 @@ public class ApproximatorForm: Form
     }
 
     #endregion
+    
+    // #region Buttons
+    //
+    // private Button StartButton { get; } = new Button();
+    // private Button StopButton { get; } = new Button();
+    //
+    // #endregion
+    //
+    // #region Decorations
+    //
+    // private Label HorizontalLine { get; } = new Label();
+    // private Label LeftVerticalLine { get; } = new Label();
+    // private Label RightVerticalLine { get; } = new Label();
+    //
+    // #endregion
+    //
+    // #region Input Controls
+    //
+    // private NumericInputControl ContestantsControl { get; } = new NumericInputControl();
+    // private NumericInputControl DominantParentGeneStrengthControl { get; } = new NumericInputControl();
+    // private ItemInputControl ErrorMetricControl { get; } = new ItemInputControl();
+    // private ItemInputControl GeneTypeControl { get; } = new ItemInputControl();
+    // private NumericInputControl MaxPolynomialDegreeControl { get; } = new NumericInputControl();
+    // private NumericInputControl MutationProbabilityControl { get; } = new NumericInputControl();
+    // private ItemInputControl PointFunctionControl { get; } = new ItemInputControl();
+    // private NumericInputControl PopulationSizeControl { get; } = new NumericInputControl();
+    // private NumericInputControl PrecisionDigitsControl { get; } = new NumericInputControl();
+    //
+    // #endregion
+    //
+    // #region Output Controls
+    //
+    // public OutputControl AverageErrorControl { get; } = new OutputControl();
+    // private Label BestFunctionControl { get; } = new Label();
+    // public RichTextBox BestFunctionOutputControl { get; } = new RichTextBox();
+    //
+    // private Label ControlTableControl { get; } = new Label();
+    // public RichTextBox ControlTableOutputControl { get; } = new RichTextBox();
+    // public OutputControl ElapsedTimeControl { get; } = new OutputControl();
+    // public OutputControl LastImprovementControl { get; } = new OutputControl();
+    // public OutputControl PopulationsCreatedControl { get; } = new OutputControl();
+    //
+    // #endregion
 
-    #region Buttons
+    
+    
+    #region Decoration Controls
 
-    private Button StartButton { get; } = new Button();
-    private Button StopButton { get; } = new Button();
+    private Label TopHorizontalLine { get; set; }
+    private Label MiddleHorizontalLine { get; set; }
+    private Label BottomHorizontalLine { get; set; }
+    
+    private Label VerticalLine { get; set; }
 
     #endregion
 
-    #region Decorations
+    #region Input/Output Controls
 
-    private Label HorizontalLine { get; } = new Label();
-    private Label LeftVerticalLine { get; } = new Label();
-    private Label RightVerticalLine { get; } = new Label();
-
-    #endregion
-
-    #region Input Controls
-
-    private NumericInputControl ContestantsControl { get; } = new NumericInputControl();
-    private NumericInputControl DominantParentGeneStrengthControl { get; } = new NumericInputControl();
-    private ItemInputControl ErrorMetricControl { get; } = new ItemInputControl();
-    private ItemInputControl GeneTypeControl { get; } = new ItemInputControl();
-    private NumericInputControl MaxPolynomialDegreeControl { get; } = new NumericInputControl();
-    private NumericInputControl MutationProbabilityControl { get; } = new NumericInputControl();
-    private ItemInputControl PointFunctionControl { get; } = new ItemInputControl();
-    private NumericInputControl PopulationSizeControl { get; } = new NumericInputControl();
-    private NumericInputControl PrecisionDigitsControl { get; } = new NumericInputControl();
-
-    #endregion
-
-    #region Output Controls
-
-    public OutputControl AverageErrorControl { get; } = new OutputControl();
-    private Label BestFunctionControl { get; } = new Label();
-    public RichTextBox BestFunctionOutputControl { get; } = new RichTextBox();
-
-    private Label ControlTableControl { get; } = new Label();
-    public RichTextBox ControlTableOutputControl { get; } = new RichTextBox();
-    public OutputControl ElapsedTimeControl { get; } = new OutputControl();
-    public OutputControl LastImprovementControl { get; } = new OutputControl();
-    public OutputControl PopulationsCreatedControl { get; } = new OutputControl();
-
-    #endregion
-
-    #region Visualisation Controls
-
-    public PictureBox Plot { get; } = new PictureBox();
-    public HScrollBar XScrollBar { get; } = new HScrollBar();
-    public VScrollBar YScrollBar { get; } = new VScrollBar();
+    private Label PointNumberLabelControl { get; set; }
+    private NumericUpDown PointNumberValueControl { get; set; }
+    private Button GeneratePointsButton { get; set; }
+    
+    private Label GeneTypeLabelControl { get; set; }
+    private ComboBox GeneTypeValueControl { get; set; }
+    private Label ErrorMetricLabelControl { get; set; }
+    private ComboBox ErrorMetricValueControl { get; set; }
+    
+    private Label MaxPolynomialDegreeLabelControl { get; set; }
+    private NumericUpDown MaxPolynomialDegreeValueControl { get; set; }
+    private Label PrecisionDigitsLabelControl { get; set; }
+    private NumericUpDown PrecisionDigitsValueControl { get; set; }
+    private Label PopulationSizeLabelControl { get; set; }
+    private NumericUpDown PopulationSizeValueControl { get; set; }
+    private Label ParentPoolSizeLabelControl { get; set; }
+    private NumericUpDown ParentPoolSizeValueControl { get; set; }
+    private Label DominantParentGeneStrengthLabelControl { get; set; }
+    private NumericUpDown DominantParentGeneStrengthValueControl { get; set; }
+    private Label MutationProbabilityLabelControl { get; set; }
+    private NumericUpDown MutationProbabilityValueControl { get; set; }
+    
+    private Label ElapsedTimeLabelControl { get; set; }
+    private Label ElapsedTimeValueControl { get; set; }
+    private Label AverageErrorLabelControl { get; set; }
+    private Label AverageErrorValueControl { get; set; }
+    private Label GenerationsEvaluatedLabelControl { get; set; }
+    private Label GenerationsEvaluatedValueControl { get; set; }
+    private Label LastImprovementLabelControl { get; set; }
+    private Label LastImprovementValueControl { get; set; }
+    
+    private Button StartEngineButton { get; set; }
+    private Button StopEngineButton { get; set; }
+    
+    private RichTextBox PointTableControl { get; set; }
 
     #endregion
     
+    #region Visualisation Controls
+
+    // public PictureBox Plot { get; } = new PictureBox();
+    // public HScrollBar XScrollBar { get; } = new HScrollBar();
+    // public VScrollBar YScrollBar { get; } = new VScrollBar();
+    private VScrollBar ScaleYScrollBar { get; set; }
+    private HScrollBar ScaleXScrollBar { get; set; }
+    private PictureBox Plot3DPictureBox { get; set; }
+
+    #endregion
+    
+    private Font ControlFont { get; } = new Font(FontFamily.GenericMonospace, 16F);
+    private int ControlHeight { get; } = 30;
+    private int ControlWidth { get; } = 400;
     private Engine Engine { get; }
 
     public ApproximatorForm()
     {
         this.Engine = new Engine(this);
-        
-        this.ConfigureButtons();
-        this.ConfigureDecorations();
-        this.ConfigureInputControls();
-        this.ConfigureOutputControls();
-        this.ConfigureVisualisationControls();
+        this.InitializeDecorationControls();
+        this.InitializeInputOutputControls();
+        this.InitializeVisualizationControls();
         
         this.ConfigureForm();
     }
-
-    private void ConfigureButtons()
+    
+    private void InitializeDecorationControls()
     {
-        this.StartButton.Click += this.StartButtonClick;
-        this.StartButton.Location = new Point(10, 640);
-        this.StartButton.Size = new Size(400, 60);
-        this.StartButton.Text = "START";
-        this.StartButton.TextAlign = ContentAlignment.MiddleCenter;
-        this.Controls.Add(this.StartButton);
+        this.TopHorizontalLine = new Label();
+        this.TopHorizontalLine.BackColor = Color.DarkGray;
+        this.TopHorizontalLine.Location = new Point(10, 138);
+        this.TopHorizontalLine.Size = new Size(400, 5);
+        this.Controls.Add(this.TopHorizontalLine);
 
-        this.StopButton.Click += this.StopButtonClick;
-        this.StopButton.Location = new Point(1050, 10);
-        this.StopButton.Size = new Size(130, 130);
-        this.StopButton.Text = "STOP";
-        this.StopButton.TextAlign = ContentAlignment.MiddleCenter;
-        this.Controls.Add(this.StopButton);
+        this.MiddleHorizontalLine = new Label();
+        this.MiddleHorizontalLine.BackColor = Color.DarkGray;
+        this.MiddleHorizontalLine.Location = new Point(10, 638);
+        this.MiddleHorizontalLine.Size = new Size(400, 5);
+        this.Controls.Add(this.MiddleHorizontalLine);
+
+        this.BottomHorizontalLine = new Label();
+        this.BottomHorizontalLine.BackColor = Color.DarkGray;
+        this.BottomHorizontalLine.Location = new Point(10, 898);
+        this.BottomHorizontalLine.Size = new Size(400, 5);
+        this.Controls.Add(this.BottomHorizontalLine);
+
+        this.VerticalLine = new Label();
+        this.VerticalLine.BackColor = Color.DarkGray;
+        this.VerticalLine.Location = new Point(878, 10);
+        this.VerticalLine.Size = new Size(5, 1020);
+        this.Controls.Add(this.VerticalLine);
     }
 
-    private void ConfigureDecorations()
+    private void InitializeInputOutputControls()
     {
-        this.HorizontalLine.BackColor = Color.DarkGray;
-        this.HorizontalLine.Location = new Point(430, 218);
-        this.HorizontalLine.Size = new Size(750, 5);
-        this.Controls.Add(this.HorizontalLine);
-        
-        this.LeftVerticalLine.BackColor = Color.DarkGray;
-        this.LeftVerticalLine.Location = new Point(418, 10);
-        this.LeftVerticalLine.Size = new Size(5, 690);
-        this.Controls.Add(this.LeftVerticalLine);
+        this.PointNumberLabelControl = this.NewLabelControl();
+        this.PointNumberLabelControl.Location = new Point(10, 10);
+        this.PointNumberLabelControl.Text = "POINT NUMBER";
+        this.Controls.Add(this.PointNumberLabelControl);
 
-        this.RightVerticalLine.BackColor = Color.DarkGray;
-        this.RightVerticalLine.Location = new Point(1188, 10);
-        this.RightVerticalLine.Size = new Size(5, 690);
-        this.Controls.Add(this.RightVerticalLine);
+        this.PointNumberValueControl = this.NewNumericInputControl();
+        this.PointNumberValueControl.Increment = 3;
+        this.PointNumberValueControl.Location = new Point(10, 40);
+        this.PointNumberValueControl.Maximum = 100;
+        this.PointNumberValueControl.Minimum = 1;
+        this.PointNumberValueControl.Value = 25;
+        this.Controls.Add(this.PointNumberValueControl);
+
+        this.GeneratePointsButton = this.NewButton();
+        this.GeneratePointsButton.Click += this.GeneratePointsButtonClick;
+        this.GeneratePointsButton.Location = new Point(10, 70);
+        this.GeneratePointsButton.Text = "GENERATE POINTS";
+        this.Controls.Add(this.GeneratePointsButton);
+        
+        // line at y = 140
+
+        this.GeneTypeLabelControl = this.NewLabelControl();
+        this.GeneTypeLabelControl.Location = new Point(10, 150);
+        this.GeneTypeLabelControl.Text = "GENE TYPE";
+        this.Controls.Add(this.GeneTypeLabelControl);
+
+        this.ErrorMetricLabelControl = this.NewLabelControl();
+        this.ErrorMetricLabelControl.Location = new Point(10, 210);
+        this.ErrorMetricLabelControl.Text = "ERROR METRIC";
+        this.Controls.Add(this.ErrorMetricLabelControl);
+
+        this.MaxPolynomialDegreeLabelControl = this.NewLabelControl();
+        this.MaxPolynomialDegreeLabelControl.Location = new Point(10, 270);
+        this.MaxPolynomialDegreeLabelControl.Text = "MAX POLYNOMIAL DEGREE";
+        this.Controls.Add(this.MaxPolynomialDegreeLabelControl);
+
+        this.MaxPolynomialDegreeValueControl = this.NewNumericInputControl();
+        this.MaxPolynomialDegreeValueControl.Increment = 1;
+        this.MaxPolynomialDegreeValueControl.Location = new Point(10, 300);
+        this.MaxPolynomialDegreeValueControl.Maximum = 5;
+        this.MaxPolynomialDegreeValueControl.Minimum = 0;
+        this.MaxPolynomialDegreeValueControl.Value = 2;
+        this.Controls.Add(this.MaxPolynomialDegreeValueControl);
+
+        this.PrecisionDigitsLabelControl = this.NewLabelControl();
+        this.PrecisionDigitsLabelControl.Location = new Point(10, 330);
+        this.PrecisionDigitsLabelControl.Text = "PRECISION DIGITS";
+        this.Controls.Add(this.PrecisionDigitsLabelControl);
+
+        this.PrecisionDigitsValueControl = this.NewNumericInputControl();
+        this.PrecisionDigitsValueControl.Increment = 1;
+        this.PrecisionDigitsValueControl.Location = new Point(10, 360);
+        this.PrecisionDigitsValueControl.Maximum = 5;
+        this.PrecisionDigitsValueControl.Minimum = 0;
+        this.PrecisionDigitsValueControl.Value = 3;
+        this.Controls.Add(this.PrecisionDigitsValueControl);
+
+        this.PopulationSizeLabelControl = this.NewLabelControl();
+        this.PopulationSizeLabelControl.Location = new Point(10, 390);
+        this.PopulationSizeLabelControl.Text = "POPULATION SIZE";
+        this.Controls.Add(this.PopulationSizeLabelControl);
+
+        this.PopulationSizeValueControl = this.NewNumericInputControl();
+        this.PopulationSizeValueControl.Increment = 25;
+        this.PopulationSizeValueControl.Location = new Point(10, 420);
+        this.PopulationSizeValueControl.Maximum = 800;
+        this.PopulationSizeValueControl.Minimum = 200;
+        this.PopulationSizeValueControl.Value = 400;
+        this.Controls.Add(this.PopulationSizeValueControl);
+
+        this.ParentPoolSizeLabelControl = this.NewLabelControl();
+        this.ParentPoolSizeLabelControl.Location = new Point(10, 450);
+        this.ParentPoolSizeLabelControl.Text = "PARENT POOL SIZE";
+        this.Controls.Add(this.ParentPoolSizeLabelControl);
+
+        this.ParentPoolSizeValueControl = this.NewNumericInputControl();
+        this.ParentPoolSizeValueControl.Increment = 20;
+        this.ParentPoolSizeValueControl.Location = new Point(10, 480);
+        this.ParentPoolSizeValueControl.Maximum = 200;
+        this.ParentPoolSizeValueControl.Minimum = 20;
+        this.ParentPoolSizeValueControl.Value = 80;
+        this.Controls.Add(this.ParentPoolSizeValueControl);
+
+        this.DominantParentGeneStrengthLabelControl = this.NewLabelControl();
+        this.DominantParentGeneStrengthLabelControl.Location = new Point(10, 510);
+        this.DominantParentGeneStrengthLabelControl.Text = "DOMINANT PARENT GENE STRENGTH";
+        this.Controls.Add(this.DominantParentGeneStrengthLabelControl);
+
+        this.DominantParentGeneStrengthValueControl = this.NewNumericInputControl();
+        this.DominantParentGeneStrengthValueControl.Increment = 20;
+        this.DominantParentGeneStrengthValueControl.Location = new Point(10, 540);
+        this.DominantParentGeneStrengthValueControl.Maximum = 1000;
+        this.DominantParentGeneStrengthValueControl.Minimum = 0;
+        this.DominantParentGeneStrengthValueControl.Value = 600;
+        this.Controls.Add(this.DominantParentGeneStrengthValueControl);
+
+        this.MutationProbabilityLabelControl = this.NewLabelControl();
+        this.MutationProbabilityLabelControl.Location = new Point(10, 570);
+        this.MutationProbabilityLabelControl.Text = "MUTATION PROBABILITY";
+        this.Controls.Add(this.MutationProbabilityLabelControl);
+
+        this.MutationProbabilityValueControl = this.NewNumericInputControl();
+        this.MutationProbabilityValueControl.Increment = 20;
+        this.MutationProbabilityValueControl.Location = new Point(10, 600);
+        this.MutationProbabilityValueControl.Maximum = 1000;
+        this.MutationProbabilityValueControl.Minimum = 0;
+        this.MutationProbabilityValueControl.Value = 100;
+        this.Controls.Add(this.MutationProbabilityValueControl);
+        
+        // line at y = 640
+
+        this.ElapsedTimeLabelControl = this.NewLabelControl();
+        this.ElapsedTimeLabelControl.Location = new Point(10, 650);
+        this.ElapsedTimeLabelControl.Text = "ELAPSED TIME";
+        this.Controls.Add(this.ElapsedTimeLabelControl);
+
+        this.ElapsedTimeValueControl = this.NewLabelControl();
+        this.ElapsedTimeValueControl.Location = new Point(10, 680);
+        this.ElapsedTimeValueControl.Text = "";
+        this.Controls.Add(this.ElapsedTimeValueControl);
+
+        this.AverageErrorLabelControl = this.NewLabelControl();
+        this.AverageErrorLabelControl.Location = new Point(10, 710);
+        this.AverageErrorLabelControl.Text = "AVERAGE ERROR";
+        this.Controls.Add(this.AverageErrorLabelControl);
+
+        this.AverageErrorValueControl = this.NewLabelControl();
+        this.AverageErrorValueControl.Location = new Point(10, 740);
+        this.AverageErrorValueControl.Text = "";
+        this.Controls.Add(this.AverageErrorValueControl);
+
+        this.GenerationsEvaluatedLabelControl = this.NewLabelControl();
+        this.GenerationsEvaluatedLabelControl.Location = new Point(10, 770);
+        this.GenerationsEvaluatedLabelControl.Text = "GENERATIONS EVALUATED";
+        this.Controls.Add(this.GenerationsEvaluatedLabelControl);
+
+        this.GenerationsEvaluatedValueControl = this.NewLabelControl();
+        this.GenerationsEvaluatedValueControl.Location = new Point(10, 800);
+        this.GenerationsEvaluatedValueControl.Text = "";
+        this.Controls.Add(this.GenerationsEvaluatedValueControl);
+
+        this.LastImprovementLabelControl = this.NewLabelControl();
+        this.LastImprovementLabelControl.Location = new Point(10, 830);
+        this.LastImprovementLabelControl.Text = "LAST IMPROVEMENT";
+        this.Controls.Add(this.LastImprovementLabelControl);
+
+        this.LastImprovementValueControl = this.NewLabelControl();
+        this.LastImprovementValueControl.Location = new Point(10, 860);
+        this.LastImprovementValueControl.Text = "";
+        this.Controls.Add(this.LastImprovementValueControl);
+        
+        // line at y = 900
+
+        this.StartEngineButton = this.NewButton();
+        this.StartEngineButton.Click += this.StartEngineButtonClick;
+        this.StartEngineButton.Location = new Point(10, 910);
+        this.StartEngineButton.Text = "START";
+        this.Controls.Add(this.StartEngineButton);
+
+        this.StopEngineButton = this.NewButton();
+        this.StopEngineButton.Click += this.StopEngineButtonClick;
+        this.StopEngineButton.Location = new Point(10, 970);
+        this.StopEngineButton.Text = "STOP";
+        this.Controls.Add(this.StopEngineButton);
+
+        this.PointTableControl = new RichTextBox();
+        this.PointTableControl.BackColor = Color.White;
+        this.PointTableControl.Font = this.ControlFont;
+        this.PointTableControl.Location = new Point(420, 10);
+        this.PointTableControl.ReadOnly = true;
+        this.PointTableControl.Size = new Size(450, 1020);
+        this.Controls.Add(this.PointTableControl);
     }
 
-    private void ConfigureInputControls()
+    private void InitializeVisualizationControls()
     {
-        this.ContestantsControl.ConfigureControl("CONTESTANTS", 10, 430);
-        this.ContestantsControl.ConfigureControlConstraints(20, 100, 50, 10);
-        this.Controls.AddRange(this.ContestantsControl.GetControls());
-        
-        this.DominantParentGeneStrengthControl.ConfigureControl("DOMINANT PARENT GENE STRENGTH", 10, 500);
-        this.DominantParentGeneStrengthControl.ConfigureControlConstraints(0, 1000, 600, 25);
-        this.Controls.AddRange(this.DominantParentGeneStrengthControl.GetControls());
-        
-        this.ErrorMetricControl.ConfigureControl("ERROR METRIC", 10, 150);
-        this.ErrorMetricControl.Populate(Enum.GetValues<ErrorMetric>());
-        this.Controls.AddRange(this.ErrorMetricControl.GetControls());
-        
-        this.GeneTypeControl.ConfigureControl("GENE TYPE", 10, 10);
-        this.GeneTypeControl.Populate(Enum.GetValues<GeneType>());
-        this.Controls.AddRange(this.GeneTypeControl.GetControls());
-        
-        this.MaxPolynomialDegreeControl.ConfigureControl("MAX POLYNOMIAL DEGREE", 10, 220);
-        this.MaxPolynomialDegreeControl.ConfigureControlConstraints(0, 5, 2, 1);
-        this.Controls.AddRange(this.MaxPolynomialDegreeControl.GetControls());
-        
-        this.MutationProbabilityControl.ConfigureControl("MUTATION PROBABILITY", 10, 570);
-        this.MutationProbabilityControl.ConfigureControlConstraints(0, 1000, 10, 10);
-        this.Controls.AddRange(this.MutationProbabilityControl.GetControls());
-        
-        this.PointFunctionControl.ConfigureControl("POINT FUNCTION", 10, 80);
-        this.PointFunctionControl.Populate(Enum.GetValues<PointFunction>());
-        this.Controls.AddRange(this.PointFunctionControl.GetControls());
-        
-        this.PopulationSizeControl.ConfigureControl("POPULATION SIZE", 10, 360);
-        this.PopulationSizeControl.ConfigureControlConstraints(200, 1000, 400, 40);
-        this.Controls.AddRange(this.PopulationSizeControl.GetControls());
-        
-        this.PrecisionDigitsControl.ConfigureControl("PRECISION DIGITS", 10, 290);
-        this.PrecisionDigitsControl.ConfigureControlConstraints(0, 6, 2, 1);
-        this.Controls.AddRange(this.PrecisionDigitsControl.GetControls());
+        this.ScaleYScrollBar = new VScrollBar();
+        this.ScaleYScrollBar.LargeChange = 1;
+        this.ScaleYScrollBar.Location = new Point(890, 10);
+        this.ScaleYScrollBar.Maximum = 25;
+        this.ScaleYScrollBar.Minimum = 1;
+        this.ScaleYScrollBar.Size = new Size(60, 950);
+        this.ScaleYScrollBar.SmallChange = 1;
+        this.ScaleYScrollBar.Value = 20;
+        this.Controls.Add(this.ScaleYScrollBar);
+
+        this.ScaleXScrollBar = new HScrollBar();
+        this.ScaleXScrollBar.LargeChange = 1;
+        this.ScaleXScrollBar.Location = new Point(960, 970);
+        this.ScaleXScrollBar.Maximum = 25;
+        this.ScaleXScrollBar.Minimum = 1;
+        this.ScaleXScrollBar.Size = new Size(950, 60);
+        this.ScaleXScrollBar.SmallChange = 1;
+        this.ScaleXScrollBar.Value = 5;
+        this.Controls.Add(this.ScaleXScrollBar);
+
+        this.Plot3DPictureBox = new PictureBox();
+        this.Plot3DPictureBox.BackColor = Color.Black;
+        this.Plot3DPictureBox.Image = new Bitmap(950, 950);
+        this.Plot3DPictureBox.Location = new Point(960, 10);
+        this.Plot3DPictureBox.Size = new Size(950, 950);
+        this.Controls.Add(this.Plot3DPictureBox);
     }
+
+    
+
+    
+
+    
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1900, 710);
+        this.ClientSize = new Size(1920, 1040);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
         this.Text = "EVOLUTIONARY APPROXIMATOR";
-    }
-
-    private void ConfigureOutputControls()
-    {
-        this.AverageErrorControl.ConfigureControl("AVERAGE ERROR", 740, 10);
-        this.Controls.AddRange(this.AverageErrorControl.GetControls());
-
-        this.BestFunctionControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.BestFunctionControl.Location = new Point(430, 150);
-        this.BestFunctionControl.Size = new Size(750, 30);
-        this.BestFunctionControl.Text = "BEST FUNCTION";
-        this.BestFunctionControl.TextAlign = ContentAlignment.MiddleLeft;
-        this.Controls.Add(this.BestFunctionControl);
-
-        this.BestFunctionOutputControl.BackColor = Color.White;
-        this.BestFunctionOutputControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.BestFunctionOutputControl.Location = new Point(430, 180);
-        this.BestFunctionOutputControl.Multiline = false;
-        this.BestFunctionOutputControl.ReadOnly = true;
-        this.BestFunctionOutputControl.Size = new Size(750, 30);
-        this.Controls.Add(this.BestFunctionOutputControl);
-
-        this.ControlTableControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.ControlTableControl.Location = new Point(430, 230);
-        this.ControlTableControl.Size = new Size(750, 30);
-        this.ControlTableControl.Text = "[ X | Y | Z ] : [ RESULT | ERROR ]";
-        this.ControlTableControl.TextAlign = ContentAlignment.MiddleLeft;
-        this.Controls.Add(this.ControlTableControl);
-
-        this.ControlTableOutputControl.BackColor = Color.White;
-        this.ControlTableOutputControl.Font = new Font(FontFamily.GenericMonospace, 16F);
-        this.ControlTableOutputControl.Location = new Point(430, 260);
-        this.ControlTableOutputControl.ReadOnly = true;
-        this.ControlTableOutputControl.Size = new Size(750, 510);
-        this.Controls.Add(this.ControlTableOutputControl);
-        
-        this.ElapsedTimeControl.ConfigureControl("ELAPSED TIME", 430, 10);
-        this.Controls.AddRange(this.ElapsedTimeControl.GetControls());
-        
-        this.LastImprovementControl.ConfigureControl("LAST IMPROVEMENT", 740, 80);
-        this.Controls.AddRange(this.LastImprovementControl.GetControls());
-        
-        this.PopulationsCreatedControl.ConfigureControl("POPULATIONS CREATED", 430, 80);
-        this.Controls.AddRange(this.PopulationsCreatedControl.GetControls());
-    }
-
-    private void ConfigureVisualisationControls()
-    {
-        this.Plot.Image = new Bitmap(620, 650);
-        this.Plot.Location = new Point(1240, 10);
-        this.Plot.Size = new Size(650, 620);
-        this.Controls.Add(this.Plot);
-        
-        this.XScrollBar.LargeChange = 1;
-        this.XScrollBar.Location = new Point(1240, 670);
-        this.XScrollBar.Maximum = 25;
-        this.XScrollBar.Minimum = 1;
-        this.XScrollBar.Size = new Size(650, 30);
-        this.XScrollBar.SmallChange = 1;
-        this.XScrollBar.Value = 5;
-        this.XScrollBar.ValueChanged += this.ScaleScrollbarValueChange;
-        this.Controls.Add(this.XScrollBar);
-        
-        this.YScrollBar.LargeChange = 1;
-        this.YScrollBar.Location = new Point(1200, 10);
-        this.YScrollBar.Maximum = 25;
-        this.YScrollBar.Minimum = 1;
-        this.YScrollBar.Size = new Size(30, 620);
-        this.YScrollBar.SmallChange = 1;
-        this.YScrollBar.Value = 20;
-        this.YScrollBar.ValueChanged += this.ScaleScrollbarValueChange;
-        this.Controls.Add(this.YScrollBar);
-    }
-
-    public int GetPixelsPerOneX()
-    {
-        return Math.Max(this.XScrollBar.Value, 1) * 10;
-    }
-
-    public int GetPixelsPerOneY()
-    {
-        return Math.Max(this.YScrollBar.Maximum - this.YScrollBar.Value + 1, 1) * 10;
     }
 
     private void ScaleScrollbarValueChange(object? sender, EventArgs args)
@@ -254,25 +393,80 @@ public class ApproximatorForm: Form
         this.Engine.VisualiseSolution();
     }
 
-    private void StartButtonClick(object? sender, EventArgs args)
+    private void GeneratePointsButtonClick(object? sender, EventArgs args)
     {
-        var job = new ApproximatorJob
-        (
-            this.ContestantsControl.GetValue(),
-            this.DominantParentGeneStrengthControl.GetValue(),
-            (ErrorMetric) this.ErrorMetricControl.GetValue(),
-            (GeneType) this.GeneTypeControl.GetValue(),
-            this.MaxPolynomialDegreeControl.GetValue(),
-            this.MutationProbabilityControl.GetValue(),
-            (PointFunction) this.PointFunctionControl.GetValue(),
-            this.PopulationSizeControl.GetValue(),
-            this.PrecisionDigitsControl.GetValue()
-        );
-        this.Engine.Start(job);
+        var pointNumber = (int) this.PointNumberValueControl.Value;
+        var precisionDigits = (int) this.PrecisionDigitsValueControl.Value;
+        var points = this.Engine.GeneratePoints(pointNumber, precisionDigits);
+        var sizeDigits = pointNumber.ToString().Length;
+        
+        this.PointTableControl.Clear();
+        var builder = new StringBuilder();
+        for (var index = 0; index < pointNumber; index++)
+        {
+            var stringIndex = (index + 1).ToString();
+            while (stringIndex.Length < sizeDigits)
+                stringIndex = $"0{stringIndex}";
+            builder.Append($"#{stringIndex}:{points[index]}\n");
+        }
+        builder.Remove(builder.Length - 1, 1);
+        this.PointTableControl.Text = builder.ToString();
     }
 
-    private void StopButtonClick(object? sender, EventArgs args)
+    private void StartEngineButtonClick(object? sender, EventArgs args)
+    {
+        // var job = new ApproximatorJob
+        // (
+        //     this.ContestantsControl.GetValue(),
+        //     this.DominantParentGeneStrengthControl.GetValue(),
+        //     (ErrorMetric) this.ErrorMetricControl.GetValue(),
+        //     (GeneType) this.GeneTypeControl.GetValue(),
+        //     this.MaxPolynomialDegreeControl.GetValue(),
+        //     this.MutationProbabilityControl.GetValue(),
+        //     (PointFunction) this.PointFunctionControl.GetValue(),
+        //     this.PopulationSizeControl.GetValue(),
+        //     this.PrecisionDigitsControl.GetValue()
+        // );
+        // this.Engine.Start(job);
+    }
+
+    private void StopEngineButtonClick(object? sender, EventArgs args)
     {
         this.Engine.Stop();
+    }
+
+    private Button NewButton()
+    {
+        var button = new Button();
+        button.Font = this.ControlFont;
+        button.Size = new Size(this.ControlWidth, 2 * this.ControlHeight);
+        button.TextAlign = ContentAlignment.MiddleCenter;
+        return button;
+    }
+    
+    private ComboBox NewEnumInputControl()
+    {
+        var comboBox = new ComboBox();
+        comboBox.Font = this.ControlFont;
+        comboBox.Size = new Size(this.ControlWidth, this.ControlHeight);
+        return comboBox;
+    }
+    
+    private Label NewLabelControl()
+    {
+        var label = new Label();
+        label.Font = this.ControlFont;
+        label.Size = new Size(this.ControlWidth, this.ControlHeight);
+        label.TextAlign = ContentAlignment.MiddleCenter;
+        return label;
+    }
+
+    private NumericUpDown NewNumericInputControl()
+    {
+        var numericUpDown = new NumericUpDown();
+        numericUpDown.Font = this.ControlFont;
+        numericUpDown.Size = new Size(this.ControlWidth, this.ControlHeight);
+        numericUpDown.TextAlign = HorizontalAlignment.Center;
+        return numericUpDown;
     }
 }
