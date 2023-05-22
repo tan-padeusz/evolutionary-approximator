@@ -4,36 +4,34 @@ namespace Data;
 
 public struct ApproximatorJob
 {
-    public int Contestants { get; }
+    
     public int DominantParentGeneStrength { get; }
     public ErrorMetric ErrorMetric { get; }
     public GeneType GeneType { get; }
     public int MaxPolynomialDegree { get; }
     public int MutationProbability { get; }
-    // public PointFunction PointFunction { get; }
+    public int ParentPoolSize { get; }
     public int PopulationSize { get; }
     public int PrecisionDigits { get; }
 
     public ApproximatorJob
     (
-        int contestants,
         int dominantParentGeneStrength,
         ErrorMetric errorMetric,
         GeneType geneType,
         int maxPolynomialDegree,
         int mutationProbability,
-        // PointFunction pointFunction,
+        int parentPoolSize,
         int populationSize,
         int precisionDigits
     )
     {
-        this.Contestants = contestants;
         this.DominantParentGeneStrength = dominantParentGeneStrength;
         this.ErrorMetric = errorMetric;
         this.GeneType = geneType;
         this.MaxPolynomialDegree = maxPolynomialDegree;
         this.MutationProbability = mutationProbability;
-        // this.PointFunction = pointFunction;
+        this.ParentPoolSize = parentPoolSize;
         this.PopulationSize = populationSize;
         this.PrecisionDigits = precisionDigits;
     }

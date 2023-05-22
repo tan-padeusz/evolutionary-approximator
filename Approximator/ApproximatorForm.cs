@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 using Enums;
 using Data;
@@ -80,12 +81,12 @@ public class ApproximatorForm: Form
     private static Font ControlFont => new Font(FontFamily.GenericMonospace, 16F);
     private static int ControlHeight => 30;
     private static int ControlWidth => 400;
-    private Engine Engine { get; }
+    private ApproximatorEngine ApproximatorEngine { get; }
     private Timer UpdateInterfaceTimer { get; } = new Timer();
 
     public ApproximatorForm()
     {
-        this.Engine = new Engine(this);
+        this.ApproximatorEngine = new ApproximatorEngine(this);
         this.ConfigureDecorationControls();
         this.ConfigureInputOutputControls();
         this.ConfigureVisualizationControls();
@@ -328,14 +329,14 @@ public class ApproximatorForm: Form
 
     private void ScaleScrollbarValueChange(object? sender, EventArgs args)
     {
-        this.Engine.VisualiseSolution();
+        this.ApproximatorEngine.VisualiseSolution();
     }
 
     private void GeneratePointsButtonClick(object? sender, EventArgs args)
     {
         var pointNumber = (int) this.PointNumberValueControl.Value;
         var precisionDigits = (int) this.PrecisionDigitsValueControl.Value;
-        var points = this.Engine.GeneratePoints(pointNumber, precisionDigits);
+        var points = this.ApproximatorEngine.GeneratePoints(pointNumber, precisionDigits);
         var sizeDigits = pointNumber.ToString().Length;
         
         this.PointTableControl.Clear();
@@ -353,24 +354,28 @@ public class ApproximatorForm: Form
 
     private void StartEngineButtonClick(object? sender, EventArgs args)
     {
-        // var job = new ApproximatorJob
-        // (
-        //     this.ContestantsControl.GetValue(),
-        //     this.DominantParentGeneStrengthControl.GetValue(),
-        //     (ErrorMetric) this.ErrorMetricControl.GetValue(),
-        //     (GeneType) this.GeneTypeControl.GetValue(),
-        //     this.MaxPolynomialDegreeControl.GetValue(),
-        //     this.MutationProbabilityControl.GetValue(),
-        //     (PointFunction) this.PointFunctionControl.GetValue(),
-        //     this.PopulationSizeControl.GetValue(),
-        //     this.PrecisionDigitsControl.GetValue()
-        // );
-        // this.Engine.Start(job);
+        if (this.ApproximatorEngine.Points == null) this.ShowError("Points not generated!");
+        else if (this.ApproximatorEngine.Running) this.ShowError("Engine is already running!");
+        else
+        {
+            var job = new ApproximatorJob
+            (
+                (int) this.DominantParentGeneStrengthValueControl.Value,
+                (ErrorMetric) this.ErrorMetricValueControl.SelectedItem,
+                (GeneType) this.GeneTypeValueControl.SelectedItem,
+                (int) this.MaxPolynomialDegreeValueControl.Value,
+                (int) this.MutationProbabilityValueControl.Value,
+                (int) this.ParentPoolSizeValueControl.Value,
+                (int) this.PopulationSizeValueControl.Value,
+                (int) this.PrecisionDigitsValueControl.Value
+            );
+        }
+        this.ApproximatorEngine.Start(job);
     }
 
     private void StopEngineButtonClick(object? sender, EventArgs args)
     {
-        this.Engine.Stop();
+        this.ApproximatorEngine.Stop();
     }
 
     private static Button NewButton()
@@ -408,12 +413,33 @@ public class ApproximatorForm: Form
         numericUpDown.TextAlign = HorizontalAlignment.Center;
         return numericUpDown;
     }
+    
+    private string FormatTime(long milliseconds)
+    {
+        var seconds = (milliseconds / 1000) % 60;
+        var minutes = milliseconds / 60000;
+
+        var minutesString = minutes < 10 ? $"0{minutes}" : minutes.ToString();
+        var secondsString = seconds < 10 ? $"0{seconds}" : seconds.ToString();
+
+        return $"{minutesString}:{secondsString}";
+    }
 
     
 
     private void UpdateInterfaceTimerTick(object? sender, EventArgs args)
     {
-        
+        var state = this.ApproximatorEngine.GetCurrentState();
+        if (!state.HasValue) return;
+        this.ElapsedTimeValueControl.Text = this.FormatTime(state.Value.ElapsedTime);
+        this.AverageErrorValueControl.Text = state.Value.GlobalBestIndividual.Error.ToString();
+        this.LastImprovementValueControl.Text = state.Value.LastImprovement.ToString();
+    }
+
+    private void ShowError(string message)
+    {
+        const MessageBoxButtons buttons = MessageBoxButtons.OK;
+        MessageBox.Show(message, "ERROR", buttons);
     }
     
     private readonly struct EnumItem

@@ -9,19 +9,19 @@ using Point = Data.Point;
 
 namespace Approximator;
 
-public class Engine
+public class ApproximatorEngine
 {
     private Population? CurrentPopulation { get; set; }
     // private ApproximatorForm Form { get; }
     private Individual? GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
     public Point[]? Points { get; private set; }
-    private bool Running { get; set; }
+    public bool Running { get; private set; }
     private Stopwatch Stopwatch { get; }
     private int TickCount { get; set; }
     private BackgroundWorker Worker { get; }
 
-    public Engine(ApproximatorForm form)
+    public ApproximatorEngine(ApproximatorForm form)
     {
         // this.Form = form;
         this.Running = false;
@@ -40,30 +40,7 @@ public class Engine
         return worker;
     }
     
-    private string FormatTime(long milliseconds)
-    {
-        var seconds = (milliseconds / 1000) % 60;
-        var minutes = milliseconds / 60000;
-
-        var minutesString = minutes < 10 ? $"0{minutes}" : minutes.ToString();
-        var secondsString = seconds < 10 ? $"0{seconds}" : seconds.ToString();
-
-        return $"{minutesString}:{secondsString}";
-    }
-
-    // private Point[] GeneratePoints(ApproximatorJob job)
-    // {
-    //     var n = 5;
-    //     var points = new Point[n * n];
-    //     var index = 0;
-    //     var function = Engine.GetPointFunction(job);
-    //     for (var x = 0.0; x < n; x++) for (var y = 0.0; y < n; y++)
-    //     {
-    //         var z = Math.Round(function(x, y), 4);
-    //         points[index++] = new Point(x, y, z);
-    //     }
-    //     return points;
-    // }
+    
     public Point[] GeneratePoints(int pointNumber, int precisionDigits)
     {
         var points = new Point[pointNumber];
@@ -77,6 +54,17 @@ public class Engine
         }
         this.Points = points;
         return points;
+    }
+
+    public ApproximatorState? GetCurrentState()
+    {
+        if (this.Points == null || this.GlobalBestIndividual == null) return null;
+        return new ApproximatorState
+        (
+            this.Stopwatch.ElapsedMilliseconds,
+            this.GlobalBestIndividual,
+            this.LastImprovement
+        );
     }
 
     private void InitialiseStaticFields(ApproximatorJob job)
