@@ -85,16 +85,16 @@ public class Engine
         Individual.InitialiseMetric(job);
     }
     
-    private static Func<double, double, double> GetPointFunction(ApproximatorJob job)
-    {
-        return job.PointFunction switch
-        {
-            PointFunction.Cubic => (x, y) => 1.3 * x * x * y - 0.6 * x * y * y - 2.1 * x * x + 1.7 * y * y,
-            PointFunction.Quadratic => (x, y) => 2.6 * x * y - 1.2 * x * x + 0.7 * y * y + 3.1 * x - 2.7 * y - 3.4,
-            PointFunction.Trigonometric => (x, y) => 2.0 / 3.0 * Math.Sin(x) * Math.Cos(y) + 1.0 / 3.0 * x * y,
-            _ => throw new InvalidEnumArgumentException($"Invalid point function : {job.PointFunction}")
-        };
-    }
+    // private static Func<double, double, double> GetPointFunction(ApproximatorJob job)
+    // {
+    //     return job.PointFunction switch
+    //     {
+    //         PointFunction.Cubic => (x, y) => 1.3 * x * x * y - 0.6 * x * y * y - 2.1 * x * x + 1.7 * y * y,
+    //         PointFunction.Quadratic => (x, y) => 2.6 * x * y - 1.2 * x * x + 0.7 * y * y + 3.1 * x - 2.7 * y - 3.4,
+    //         PointFunction.Trigonometric => (x, y) => 2.0 / 3.0 * Math.Sin(x) * Math.Cos(y) + 1.0 / 3.0 * x * y,
+    //         _ => throw new InvalidEnumArgumentException($"Invalid point function : {job.PointFunction}")
+    //     };
+    // }
 
     public void Start(ApproximatorJob job)
     {

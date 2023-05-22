@@ -10,7 +10,7 @@ public struct ApproximatorJob
     public GeneType GeneType { get; }
     public int MaxPolynomialDegree { get; }
     public int MutationProbability { get; }
-    public PointFunction PointFunction { get; }
+    // public PointFunction PointFunction { get; }
     public int PopulationSize { get; }
     public int PrecisionDigits { get; }
 
@@ -22,7 +22,7 @@ public struct ApproximatorJob
         GeneType geneType,
         int maxPolynomialDegree,
         int mutationProbability,
-        PointFunction pointFunction,
+        // PointFunction pointFunction,
         int populationSize,
         int precisionDigits
     )
@@ -33,7 +33,7 @@ public struct ApproximatorJob
         this.GeneType = geneType;
         this.MaxPolynomialDegree = maxPolynomialDegree;
         this.MutationProbability = mutationProbability;
-        this.PointFunction = pointFunction;
+        // this.PointFunction = pointFunction;
         this.PopulationSize = populationSize;
         this.PrecisionDigits = precisionDigits;
     }

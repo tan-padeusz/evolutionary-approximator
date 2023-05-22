@@ -2,5 +2,5 @@
 
 public enum GeneType
 {
-    Binary, Integer, Real
+    BINARY, INTEGER, REAL
 }

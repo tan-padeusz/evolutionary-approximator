@@ -54,9 +54,9 @@ public class Chromosome
     {
         Chromosome.ChromosomeDecogen= job.GeneType switch
         {
-            GeneType.Binary => new BinaryChromosomeDecogen(job),
-            GeneType.Integer => new IntegerChromosomeDecogen(job),
-            GeneType.Real => new RealChromosomeDecogen(job),
+            GeneType.BINARY => new BinaryChromosomeDecogen(job),
+            GeneType.INTEGER => new IntegerChromosomeDecogen(job),
+            GeneType.REAL => new RealChromosomeDecogen(job),
             _ => throw new InvalidEnumArgumentException($"Invalid gene type : {job.GeneType}")
         };
     }

@@ -2,5 +2,5 @@
 
 public enum ErrorMetric
 {
-    Absolute, Squared, DoubleSquared
+    ABSOLUTE, SQUARED, DOUBLE_SQUARED
 }

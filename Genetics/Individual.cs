@@ -51,9 +51,9 @@ public class Individual
     {
         Individual.Metric = job.ErrorMetric switch
         {
-            ErrorMetric.Absolute => (given, expected) => Math.Abs(given - expected),
-            ErrorMetric.Squared => (given, expected) => Math.Pow(given - expected, 2),
-            ErrorMetric.DoubleSquared => (given, expected) => Math.Pow(given - expected, 4),
+            ErrorMetric.ABSOLUTE => (given, expected) => Math.Abs(given - expected),
+            ErrorMetric.SQUARED => (given, expected) => Math.Pow(given - expected, 2),
+            ErrorMetric.DOUBLE_SQUARED => (given, expected) => Math.Pow(given - expected, 4),
             _ => throw new InvalidEnumArgumentException($"Invalid error metric : {job.ErrorMetric}")
         };
     }
