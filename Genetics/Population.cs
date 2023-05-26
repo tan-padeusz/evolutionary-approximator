@@ -5,16 +5,10 @@ namespace Genetics;
 
 public class Population
 {
-    public Individual BestIndividual { get; protected init; }
-    public long Id { get; protected init; }
-    private Individual[] Individuals { get; init; }
+    public Individual BestIndividual { get; }
+    public long Id { get; }
+    private Individual[] Individuals { get; }
     private static Random Random { get; } = new Random();
-    
-    private Individual this[int index]
-    {
-        get => this.Individuals[index];
-        set => this.Individuals[index] = value;
-    }
 
     public Population(ApproximatorJob job, Point[] points)
     {
@@ -30,7 +24,7 @@ public class Population
         this.BestIndividual = this.FindBestIndividual();
     }
 
-    protected Individual FindBestIndividual()
+    private Individual FindBestIndividual()
     {
         var bestIndividual = this.Individuals[0];
         for (var index = 1; index < this.Individuals.Length; index++)
@@ -51,9 +45,15 @@ public class Population
     private static Individual[] GeneratePopulation(ApproximatorJob job, Point[] points, Population previousPopulation)
     {
         var individuals = new Individual[job.PopulationSize];
+        var parentPool = previousPopulation.SelectParents(job);
         Parallel.For(0, job.PopulationSize, index =>
         {
-            var parents = previousPopulation.SelectParents(job);
+            var firstParent = parentPool[Population.Random.Next(job.ParentPoolSize)];
+            Individual secondParent;
+            do secondParent = parentPool[Population.Random.Next(job.ParentPoolSize)];
+            while (secondParent == firstParent);
+            var parents = new Individual[] { firstParent, secondParent };
+            if (firstParent.IsWorseThan(secondParent)) (parents[0], parents[1]) = (parents[1], parents[0]);
             individuals[index] = new Individual(job, points, parents);
         });
         return individuals;
@@ -61,19 +61,14 @@ public class Population
     
     private Individual[] SelectParents(ApproximatorJob job)
     {
-        var availableIndividuals = job.PopulationSize;
-        var parents = new Individual?[] { null, null };
-        for (var contestantIndex = 0; contestantIndex < 2 * job.Contestants; contestantIndex++)
+        var parents = new Individual[job.ParentPoolSize];
+        for (var index = 0; index < job.ParentPoolSize; index++)
         {
-            var randomIndividualIndex = Random.Next(availableIndividuals);
-            var randomIndividual = this.Individuals[randomIndividualIndex];
-            var groupIndex = contestantIndex % 2;
-            if (parents[groupIndex] == null || parents[groupIndex]!.IsWorseThan(randomIndividual))
-                parents[groupIndex] = randomIndividual;
-            (this[randomIndividualIndex], this[availableIndividuals - 1]) = (this[availableIndividuals - 1], randomIndividual);
-            availableIndividuals--;
+            Individual randomIndividual;
+            do randomIndividual = this.Individuals[Population.Random.Next(job.PopulationSize)];
+            while (parents.Contains(randomIndividual));
+            parents[index] = randomIndividual;
         }
-        if (parents[0]!.IsWorseThan(parents[1]!)) (parents[0], parents[1]) = (parents[1], parents[0]);
-        return parents!;
+        return parents;
     }
 }
