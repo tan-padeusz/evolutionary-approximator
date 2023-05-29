@@ -288,27 +288,29 @@ public class ApproximatorForm: Form
         this.ScaleYScrollBar.Location = new Point(890, 10);
         this.ScaleYScrollBar.Maximum = 25;
         this.ScaleYScrollBar.Minimum = 1;
-        this.ScaleYScrollBar.Size = new Size(60, 950);
+        this.ScaleYScrollBar.Size = new Size(30, 830);
         this.ScaleYScrollBar.SmallChange = 1;
         this.ScaleYScrollBar.Value = 20;
         this.ScaleYScrollBar.ValueChanged += this.ScaleScrollbarValueChanged;
         this.Controls.Add(this.ScaleYScrollBar);
 
         this.ScaleXScrollBar.LargeChange = 1;
-        this.ScaleXScrollBar.Location = new Point(960, 970);
+        this.ScaleXScrollBar.Location = new Point(930, 850);
         this.ScaleXScrollBar.Maximum = 25;
         this.ScaleXScrollBar.Minimum = 1;
-        this.ScaleXScrollBar.Size = new Size(950, 60);
+        this.ScaleXScrollBar.Size = new Size(830, 30);
         this.ScaleXScrollBar.SmallChange = 1;
         this.ScaleXScrollBar.Value = 5;
         this.ScaleXScrollBar.ValueChanged += this.ScaleScrollbarValueChanged;
         this.Controls.Add(this.ScaleXScrollBar);
 
         this.Plot3DPictureBox.BackColor = Color.Black;
-        this.Plot3DPictureBox.Image = new Bitmap(950, 950);
-        this.Plot3DPictureBox.Location = new Point(960, 10);
-        this.Plot3DPictureBox.Size = new Size(950, 950);
+        this.Plot3DPictureBox.Image = new Bitmap(830, 830);
+        this.Plot3DPictureBox.Location = new Point(930, 10);
+        this.Plot3DPictureBox.Size = new Size(830, 830);
         this.Controls.Add(this.Plot3DPictureBox);
+        
+        this.VisualizeSolution();
     }
 
     private void ConfigureUpdateInterfaceTimer()
@@ -324,7 +326,7 @@ public class ApproximatorForm: Form
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1920, 890);
+        this.ClientSize = new Size(1770, 890);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -333,7 +335,7 @@ public class ApproximatorForm: Form
 
     private void ScaleScrollbarValueChanged(object? sender, EventArgs args)
     {
-        // this.ApproximatorEngine.VisualiseSolution();
+        this.VisualizeSolution();
     }
 
     private void GeneratePointsButtonClick(object? sender, EventArgs args)
@@ -425,18 +427,72 @@ public class ApproximatorForm: Form
 
     private void UpdateInterfaceTimerTick(object? sender, EventArgs args)
     {
-        // this.ElapsedTimeValueControl.Text = this.FormatTime(this.Stopwatch.ElapsedMilliseconds);
-        // var state = this.ApproximatorEngine.GetCurrentState();
-        // if (!state.HasValue) return;
-        // this.ElapsedTimeValueControl.Text = this.FormatTime(state.Value.ElapsedTime);
-        // this.AverageErrorValueControl.Text = state.Value.GlobalBestIndividual.Error.ToString();
-        // this.LastImprovementValueControl.Text = state.Value.LastImprovement.ToString();
         var state = this.ApproximatorEngine.GetCurrentState();
         if (state == null) return;
         this.AverageErrorValueControl.Text = state.AverageError;
         this.ElapsedTimeValueControl.Text = state.ElapsedTime;
         this.LastImprovementValueControl.Text = state.LastImprovement;
         this.PopulationsCreatedValueControl.Text = state.PopulationsCreated;
+        this.VisualizeSolution();
+    }
+
+    private void VisualizeSolution()
+    {
+        var graphics = Graphics.FromImage(this.Plot3DPictureBox.Image);
+        graphics.Clear(Color.Black);
+
+        const int nodesCount = 45;
+
+        const int leftXBias = 300;
+        const int rightXBias = 200;
+        const int topYBias = 200;
+        const int bottomYBias = 100;
+
+        const int pixelsFromLeft = 60;
+        const int pixelsFromTop = 210;
+        const int pixelsFromRight = pixelsFromLeft + leftXBias + rightXBias;
+        const int pixelsFromBottom = pixelsFromTop + topYBias + bottomYBias;
+
+        const int centerX = (pixelsFromLeft + pixelsFromRight) / 2;
+        const int centerY = (pixelsFromTop + pixelsFromBottom) / 2;
+
+        const double leftXStep = leftXBias / (nodesCount - 1.0);
+        const double rightXStep = rightXBias / (nodesCount - 1.0);
+        const double topYStep = topYBias / (nodesCount - 1.0);
+        const double bottomYStep = bottomYBias / (nodesCount - 1.0);
+
+        const double range = (nodesCount - 1.0) / 2;
+
+        var pixelsPerOneX = this.ScaleXScrollBar.Value * 10;
+        var pixelsPerOneY = this.ScaleYScrollBar.Value * 10;
+        
+        var invertedXScale = leftXStep / pixelsPerOneX;
+
+        int i, j;
+        int p, q;
+
+        var (previousI, previousJ) = (centerX, centerY);
+        
+        var xs = new int[nodesCount];
+        var ys = new int[nodesCount];
+        
+        for (q = 0; q < nodesCount; q++) for (p = 0; p < nodesCount; p++)
+        {
+            i = pixelsFromLeft + rightXBias + (int) (leftXStep * p - rightXStep * q);
+            j = pixelsFromTop + (int) (topYStep * p + bottomYStep * q);
+            var x = invertedXScale * (p - range);
+            var y = invertedXScale * (q - range);
+            var z = this.ApproximatorEngine.CalculateFunctionResult(x, y);
+            var k = j - (int) (pixelsPerOneY * z);
+            if (p > 0) graphics.DrawLine(Pens.Red, previousI, previousJ, i, k);
+            if (q > 0) graphics.DrawLine(Pens.Red, xs[p], ys[p], i, k);
+            previousI = i;
+            previousJ = k;
+            xs[p] = i;
+            ys[p] = k;
+        }
+        
+        this.Plot3DPictureBox.Refresh();
     }
 
     private void ShowError(string message)

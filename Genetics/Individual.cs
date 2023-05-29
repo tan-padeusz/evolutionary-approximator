@@ -28,17 +28,17 @@ public class Individual
         this.Error = this.EvaluateError(points);
     }
 
-    public double CalculateFunctionResult(Point point)
+    public double CalculateFunctionResult(double x, double y)
     {
         var result = 0.0;
         for (var degree = 0; degree < this.Factors.Length; degree++) for (var yPower = 0; yPower <= degree; yPower++)
-            result += this.Factors[degree][yPower] * Math.Pow(point.X, degree - yPower) * Math.Pow(point.Y, yPower);
+            result += this.Factors[degree][yPower] * Math.Pow(x, degree - yPower) * Math.Pow(y, yPower);
         return Math.Round(result, 4);
     }
     
     private double EvaluateError(Point[] points)
     {
-        var error = points.Sum(point => Individual.Metric(this.CalculateFunctionResult(point), point.Z));
+        var error = points.Sum(point => Individual.Metric(this.CalculateFunctionResult(point.X, point.Y), point.Z));
         return Math.Round(error / points.Length, 4);
     }
 
