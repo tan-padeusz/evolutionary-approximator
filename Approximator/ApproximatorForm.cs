@@ -63,8 +63,11 @@ public class ApproximatorForm: Form
     private Label LastImprovementLabelControl { get; } = ApproximatorForm.NewLabel();
     private Label LastImprovementValueControl { get; } = ApproximatorForm.NewLabel();
 
+    private Label EngineStatusControl { get; } = ApproximatorForm.NewLabel();
     private Button StartEngineButton { get; } = ApproximatorForm.NewButton();
     private Button StopEngineButton { get; } = ApproximatorForm.NewButton();
+    private Button PauseEngineButton { get; } = ApproximatorForm.NewButton();
+    private Button ResumeEngineButton { get; } = ApproximatorForm.NewButton();
 
     private RichTextBox PointTableControl { get; } = new RichTextBox();
 
@@ -99,17 +102,17 @@ public class ApproximatorForm: Form
     {
         this.TopHorizontalLine.BackColor = Color.DarkGray;
         this.TopHorizontalLine.Location = new Point(10, 123);
-        this.TopHorizontalLine.Size = new Size(400, 5);
+        this.TopHorizontalLine.Size = new Size(350, 5);
         this.Controls.Add(this.TopHorizontalLine);
 
         this.MiddleHorizontalLine.BackColor = Color.DarkGray;
         this.MiddleHorizontalLine.Location = new Point(10, 543);
-        this.MiddleHorizontalLine.Size = new Size(400, 5);
+        this.MiddleHorizontalLine.Size = new Size(350, 5);
         this.Controls.Add(this.MiddleHorizontalLine);
 
         this.BottomHorizontalLine.BackColor = Color.DarkGray;
         this.BottomHorizontalLine.Location = new Point(10, 763);
-        this.BottomHorizontalLine.Size = new Size(400, 5);
+        this.BottomHorizontalLine.Size = new Size(350, 5);
         this.Controls.Add(this.BottomHorizontalLine);
 
         this.VerticalLine.BackColor = Color.DarkGray;
@@ -134,6 +137,7 @@ public class ApproximatorForm: Form
         this.GeneratePointsButton.Click += this.GeneratePointsButtonClick;
         this.GeneratePointsButton.Location = new Point(10, 65);
         this.GeneratePointsButton.Text = "GENERATE POINTS";
+        this.GeneratePointsButton.Width = ApproximatorForm.ControlWidth;
         this.Controls.Add(this.GeneratePointsButton);
         
         // line at y = 125
@@ -264,15 +268,29 @@ public class ApproximatorForm: Form
         
         // line at y = 765
 
+        this.EngineStatusControl.Location = new Point(10, 775);
+        this.EngineStatusControl.Text = "APPROXIMATION STATUS : STOPPED";
+        this.Controls.Add(this.EngineStatusControl);
+
         this.StartEngineButton.Click += this.StartEngineButtonClick;
-        this.StartEngineButton.Location = new Point(10, 775);
+        this.StartEngineButton.Location = new Point(10, 805);
         this.StartEngineButton.Text = "START";
         this.Controls.Add(this.StartEngineButton);
 
         this.StopEngineButton.Click += this.StopEngineButtonClick;
-        this.StopEngineButton.Location = new Point(10, 830);
+        this.StopEngineButton.Location = new Point(190, 805);
         this.StopEngineButton.Text = "STOP";
         this.Controls.Add(this.StopEngineButton);
+
+        this.PauseEngineButton.Click += this.PauseEngineButtonClick;
+        this.PauseEngineButton.Location = new Point(10, 860);
+        this.PauseEngineButton.Text = "PAUSE";
+        this.Controls.Add(this.PauseEngineButton);
+        
+        this.ResumeEngineButton.Click += this.ResumeEngineButtonClick;
+        this.ResumeEngineButton.Location = new Point(190, 860);
+        this.ResumeEngineButton.Text = "RESUME";
+        this.Controls.Add(this.ResumeEngineButton);
 
         this.PointTableControl.BackColor = Color.White;
         this.PointTableControl.Font = ApproximatorForm.ControlFont;
@@ -326,7 +344,7 @@ public class ApproximatorForm: Form
 
     private void ConfigureForm()
     {
-        this.ClientSize = new Size(1770, 890);
+        this.ClientSize = new Size(1770, 920);
         this.FormBorderStyle = FormBorderStyle.FixedSingle;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
@@ -378,20 +396,31 @@ public class ApproximatorForm: Form
                 (int) this.PopulationSizeValueControl.Value,
                 (int) this.PrecisionDigitsValueControl.Value
             );
-            this.ApproximatorEngine.Start(job);
+            if (this.ApproximatorEngine.Start(job)) this.EngineStatusControl.Text = "APPROXIMATION STATUS : RUNNING";
         }
     }
 
     private void StopEngineButtonClick(object? sender, EventArgs args)
     {
         this.ApproximatorEngine.Stop();
+        this.EngineStatusControl.Text = "APPROXIMATION STATUS : STOPPED";
+    }
+
+    private void PauseEngineButtonClick(object? sender, EventArgs args)
+    {
+        if (this.ApproximatorEngine.Pause()) this.EngineStatusControl.Text = "APPROXIMATION STATUS : PAUSED";
+    }
+    
+    private void ResumeEngineButtonClick(object? sender, EventArgs args)
+    {
+        if (this.ApproximatorEngine.Resume()) this.EngineStatusControl.Text = "APPROXIMATION STATUS : RUNNING";
     }
 
     private static Button NewButton()
     {
         var button = new Button();
         button.Font = ApproximatorForm.ControlFont;
-        button.Size = new Size(ControlWidth, 2 * ControlHeight);
+        button.Size = new Size(ControlWidth / 2 - 5, 2 * ControlHeight);
         button.TextAlign = ContentAlignment.MiddleCenter;
         return button;
     }

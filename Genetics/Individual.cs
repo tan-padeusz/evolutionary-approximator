@@ -11,8 +11,9 @@ public class Individual
     private Chromosome Chromosome { get; }
     public double Error { get; }
     private double[][] Factors { get; }
-    
-    private static Func<double, double, double> Metric { get; set; }
+
+    private static Func<double, double, double> Metric { get; set; } = (_, _) => 0;
+    private static Func<double, double> ReversedMetric { get; set; } = _ => 0;
 
     public Individual(ApproximatorJob job, Point[] points)
     {
@@ -38,8 +39,8 @@ public class Individual
     
     private double EvaluateError(Point[] points)
     {
-        var error = points.Sum(point => Individual.Metric(this.CalculateFunctionResult(point.X, point.Y), point.Z));
-        return Math.Round(error / points.Length, 4);
+        var error = points.Sum(point => Individual.Metric(point.Z, this.CalculateFunctionResult(point.X, point.Y)));
+        return Math.Round(Individual.ReversedMetric(error / points.Length), 4);
     }
 
     public bool IsWorseThan(Individual other)
@@ -51,10 +52,21 @@ public class Individual
     {
         Individual.Metric = job.ErrorMetric switch
         {
-            ErrorMetric.ABSOLUTE => (given, expected) => Math.Abs(given - expected),
-            ErrorMetric.SQUARED => (given, expected) => Math.Pow(given - expected, 2),
-            ErrorMetric.DOUBLE_SQUARED => (given, expected) => Math.Pow(given - expected, 4),
+            ErrorMetric.ABSOLUTE => (expected, actual) => Math.Abs(expected - actual),
+            ErrorMetric.SQUARED => (expected, actual) => Math.Pow(expected - actual, 2),
+            ErrorMetric.DOUBLE_SQUARED => (expected, actual) => Math.Pow(expected - actual, 4),
             _ => throw new InvalidEnumArgumentException($"Invalid error metric : {job.ErrorMetric}")
+        };
+
+        const double one = 1.0;
+        const double half = 1.0 / 2.0;
+        const double quarter = 1.0 / 4.0;
+        Individual.ReversedMetric = job.ErrorMetric switch
+        {
+            ErrorMetric.ABSOLUTE => (value) => value,
+            ErrorMetric.SQUARED => Math.Sqrt,
+            ErrorMetric.DOUBLE_SQUARED => value => Math.Pow(value, quarter),
+            _ => throw new InvalidEnumArgumentException($"Invalid reversed error metric : {job.ErrorMetric}")
         };
     }
     

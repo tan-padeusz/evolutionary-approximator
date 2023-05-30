@@ -7,20 +7,15 @@ namespace Approximator;
 
 public class ApproximatorEngine
 {
+    public bool Paused { get; private set; } = false;
     public Point[]? Points { get; private set; }
-    public bool Running { get; private set; }
+    public bool Running { get; private set; } = false;
 
     private Individual? GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
     private long PopulationsCreated { get; set; }
     private Stopwatch Stopwatch { get; } = new Stopwatch();
 
-    public ApproximatorEngine()
-    {
-        this.Running = false;
-    }
-    
-    
     public Point[] GeneratePoints(int pointNumber, int precisionDigits)
     {
         var points = new Point[pointNumber];
@@ -49,6 +44,12 @@ public class ApproximatorEngine
             
             while (this.Running)
             {
+                if (this.Paused)
+                {
+                    Thread.Sleep(10);
+                    continue;
+                }
+                
                 population = new Population(job, this.Points!, population);
                 // pbi -> population best individual
                 var pbi = population.BestIndividual;
@@ -95,13 +96,30 @@ public class ApproximatorEngine
         this.PopulationsCreated = 0;
         this.Stopwatch.Reset();
     }
-    
-    public void Start(ApproximatorJob job)
+
+    public bool Pause()
     {
-        if (this.Running) return;
+        if (!this.Running || this.Paused) return false;
+        this.Stopwatch.Stop();
+        this.Paused = true;
+        return true;
+    }
+
+    public bool Resume()
+    {
+        if (!this.Running || !this.Paused) return false;
+        this.Stopwatch.Start();
+        this.Paused = false;
+        return true;
+    }
+    
+    public bool Start(ApproximatorJob job)
+    {
+        if (this.Running) return false;
         this.Reset();
         this.Running = true;
         this.Approximate(job);
+        return true;
     }
 
     public void Stop()
