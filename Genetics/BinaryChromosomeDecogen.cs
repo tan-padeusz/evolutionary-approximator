@@ -4,12 +4,9 @@ namespace Genetics;
 
 public class BinaryChromosomeDecogen: ChromosomeDecogen
 {
-    private double[] RootArray { get; }
-    
     public BinaryChromosomeDecogen(ApproximatorJob job) : base(job)
     {
-        this.GenesPerFactor = (job.PrecisionDigits + 1) * 10 + 1;
-        this.RootArray = this.CreateRootArray();
+        this.GenesPerFactor = 32;
     }
 
     public override Gene NewRandomGene()
@@ -17,44 +14,40 @@ public class BinaryChromosomeDecogen: ChromosomeDecogen
         return new BinaryGene();
     }
 
-    private double[] CreateRootArray()
+    public override float[,] Decode(Gene[] genes)
     {
-        var size = this.GenesPerFactor * (this.GenesPerFactor - 1) / 2;
-        var rootArray = new double[size];
-        for (var index = 0; index < size; index++)
-            rootArray[index] = Math.Cbrt(index);
-        return rootArray;
-    }
-
-    public override double[][] Decode(Gene[] genes)
-    {
-        const double range = 10.0;
-        var delta = range / (this.GenesPerFactor - 2.0);
-        var factors = new double[this.MaxPolynomialDegree + 1][];
+        const int genesPerFactor = 32;
+        const float range = 10.0F;
+        const float delta = range / (genesPerFactor - 2.0F);
+        
+        var factors = new float[this.MaxPolynomialDegree + 1, this.MaxPolynomialDegree + 1];
         var startingIndex = 0;
-        for (var degree = 0; degree <= this.MaxPolynomialDegree; degree++)
+        
+        for (var xPower = 0; xPower <= this.MaxPolynomialDegree; xPower++)
+        for (var yPower = 0; yPower <= this.MaxPolynomialDegree; yPower++)
         {
-            var degreeFactors = new double[degree + 1];
-            for (var yPower = 0; yPower <= degree; yPower++)
+            if (xPower + yPower > this.MaxPolynomialDegree) continue;
+
+            var factor = 0.0F;
+            var ones = 0;
+            var factorGenes = ChromosomeDecogen.GetPart(genes, startingIndex, genesPerFactor);
+            
+            for (var geneIndex = 1; geneIndex < genesPerFactor; geneIndex++)
             {
-                var sum = 0.0;
-                var ones = 0;
-                var factorGenes = ChromosomeDecogen.GetPart(genes, startingIndex, this.GenesPerFactor);
-                for (var geneIndex = 1; geneIndex < this.GenesPerFactor; geneIndex++)
-                {
-                    var gene = (BinaryGene) factorGenes[geneIndex];
-                    if (!gene.Value) continue;
-                    sum += (geneIndex - 1) * delta - range;
-                    ones++;
-                }
-                if (ones == 0) ones = 1;
-                var factor = sum / ones;
-                if (((BinaryGene) factorGenes[0]).Value) factor *= -1;
-                degreeFactors[yPower] = Math.Round(factor, this.PrecisionDigits);
-                startingIndex += this.GenesPerFactor;
+                var gene = (BinaryGene) factorGenes[geneIndex];
+                if (!gene.Value) continue;
+                factor += (geneIndex - 1) * delta - range;
+                ones++;
             }
-            factors[degree] = degreeFactors;
+
+            if (ones == 0) ones = 1;
+            factor /= ones;
+            if (((BinaryGene) factorGenes[0]).Value) factor *= -1;
+
+            factors[xPower, yPower] = (float) Math.Round(factor, 4);
+            startingIndex += genesPerFactor;
         }
+
         return factors;
     }
 }

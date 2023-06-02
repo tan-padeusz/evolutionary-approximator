@@ -7,8 +7,8 @@ public abstract class ChromosomeDecogen
 {
     public int FactorCount { get; }
     public int GenesPerFactor { get; protected init; }
-    protected int MaxPolynomialDegree { get; }
     protected int PrecisionDigits { get; }
+    protected int MaxPolynomialDegree { get; }
 
     protected ChromosomeDecogen(ApproximatorJob job)
     {
@@ -18,7 +18,7 @@ public abstract class ChromosomeDecogen
     }
     
     public abstract Gene NewRandomGene();
-    public abstract double[][] Decode(Gene[] genes);
+    public abstract float[,] Decode(Gene[] genes);
 
     protected static Gene[] GetPart(Gene[] source, int from, int count)
     {

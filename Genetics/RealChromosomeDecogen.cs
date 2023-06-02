@@ -14,23 +14,21 @@ public class RealChromosomeDecogen: ChromosomeDecogen
         return new RealGene();
     }
 
-    public override double[][] Decode(Gene[] genes)
+    public override float[,] Decode(Gene[] genes)
     {
-        var factors = new double[this.MaxPolynomialDegree + 1][];
-        var startingIndex = 0;
-        for (var degree = 0; degree <= this.MaxPolynomialDegree; degree++)
+        var factors = new float[this.MaxPolynomialDegree + 1, this.MaxPolynomialDegree + 1];
+        var geneIndex = 0;
+        
+        for (var xPower = 0; xPower <= this.MaxPolynomialDegree; xPower++)
+        for (var yPower = 0; yPower <= this.MaxPolynomialDegree; yPower++)
         {
-            var degreeFactors = new double[degree + 1];
-            for (var yPower = 0; yPower <= degree; yPower++)
-            {
-                var factorGenes =
-                    ChromosomeDecogen.GetPart(genes, startingIndex, this.GenesPerFactor);
-                var factor = ((RealGene) factorGenes[0]).Value;
-                degreeFactors[yPower] = Math.Round(factor, this.PrecisionDigits);
-                startingIndex += this.GenesPerFactor;
-            }
-            factors[degree] = degreeFactors;
+            if (xPower + yPower > this.MaxPolynomialDegree) continue;
+
+            var factor = ((RealGene) genes[geneIndex]).Value;
+            factors[xPower, yPower] = (float) Math.Round(factor, 4);
+            geneIndex++;
         }
+
         return factors;
     }
 }

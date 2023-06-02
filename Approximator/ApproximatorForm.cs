@@ -81,11 +81,10 @@ public class ApproximatorForm: Form
 
     #endregion
     
-    private static Font ControlFont => new Font(FontFamily.GenericMonospace, 14F);
-    private static int ControlHeight => 25;
-    private static int ControlWidth => 350;
+    private static Font ControlFont => new Font(FontFamily.GenericMonospace, 12.5F);
+    private static int ControlHeight => 20;
+    private static int ControlWidth => 300;
     private ApproximatorEngine ApproximatorEngine { get; }
-    private Stopwatch Stopwatch { get; } = new Stopwatch();
     private Timer UpdateInterfaceTimer { get; } = new Timer();
 
     public ApproximatorForm()
@@ -101,13 +100,13 @@ public class ApproximatorForm: Form
     private void ConfigureDecorationControls()
     {
         this.TopHorizontalLine.BackColor = Color.DarkGray;
-        this.TopHorizontalLine.Location = new Point(10, 123);
-        this.TopHorizontalLine.Size = new Size(350, 5);
+        this.TopHorizontalLine.Location = new Point(10, 108);
+        this.TopHorizontalLine.Size = new Size(ApproximatorForm.ControlWidth, 5);
         this.Controls.Add(this.TopHorizontalLine);
 
         this.MiddleHorizontalLine.BackColor = Color.DarkGray;
-        this.MiddleHorizontalLine.Location = new Point(10, 543);
-        this.MiddleHorizontalLine.Size = new Size(350, 5);
+        this.MiddleHorizontalLine.Location = new Point(10, 448);
+        this.MiddleHorizontalLine.Size = new Size(ApproximatorForm.ControlWidth, 5);
         this.Controls.Add(this.MiddleHorizontalLine);
 
         this.BottomHorizontalLine.BackColor = Color.DarkGray;
@@ -128,167 +127,167 @@ public class ApproximatorForm: Form
         this.Controls.Add(this.PointNumberLabelControl);
 
         this.PointNumberValueControl.Increment = 1;
-        this.PointNumberValueControl.Location = new Point(10, 35);
+        this.PointNumberValueControl.Location = new Point(10, 30);
         this.PointNumberValueControl.Maximum = 25;
         this.PointNumberValueControl.Minimum = 1;
         this.PointNumberValueControl.Value = 15;
         this.Controls.Add(this.PointNumberValueControl);
 
         this.GeneratePointsButton.Click += this.GeneratePointsButtonClick;
-        this.GeneratePointsButton.Location = new Point(10, 65);
+        this.GeneratePointsButton.Location = new Point(10, 60);
         this.GeneratePointsButton.Text = "GENERATE POINTS";
         this.GeneratePointsButton.Width = ApproximatorForm.ControlWidth;
         this.Controls.Add(this.GeneratePointsButton);
         
-        // line at y = 125
+        // line at y = 110
 
-        this.GeneTypeLabelControl.Location = new Point(10, 135);
+        this.GeneTypeLabelControl.Location = new Point(10, 120);
         this.GeneTypeLabelControl.Text = "GENE TYPE";
         this.Controls.Add(this.GeneTypeLabelControl);
 
         this.GeneTypeValueControl.DisplayMember = "Name";
-        this.GeneTypeValueControl.Location = new Point(10, 160);
+        this.GeneTypeValueControl.Location = new Point(10, 140);
         this.GeneTypeValueControl.ValueMember = "Value";
         foreach (var value in Enum.GetValues<GeneType>())
             this.GeneTypeValueControl.Items.Add(new EnumItem(value));
         this.GeneTypeValueControl.SelectedIndex = 2;
         this.Controls.Add(this.GeneTypeValueControl);
 
-        this.ErrorMetricLabelControl.Location = new Point(10, 185);
+        this.ErrorMetricLabelControl.Location = new Point(10, 160);
         this.ErrorMetricLabelControl.Text = "ERROR METRIC";
         this.Controls.Add(this.ErrorMetricLabelControl);
 
         this.ErrorMetricValueControl.DisplayMember = "Name";
-        this.ErrorMetricValueControl.Location = new Point(10, 210);
+        this.ErrorMetricValueControl.Location = new Point(10, 180);
         this.ErrorMetricValueControl.ValueMember = "Value";
         foreach (var value in Enum.GetValues<ErrorMetric>())
             this.ErrorMetricValueControl.Items.Add(new EnumItem(value));
         this.ErrorMetricValueControl.SelectedIndex = 1;
         this.Controls.Add(this.ErrorMetricValueControl);
 
-        this.MaxPolynomialDegreeLabelControl.Location = new Point(10, 235);
+        this.MaxPolynomialDegreeLabelControl.Location = new Point(10, 200);
         this.MaxPolynomialDegreeLabelControl.Text = "MAX POLYNOMIAL DEGREE";
         this.Controls.Add(this.MaxPolynomialDegreeLabelControl);
 
         this.MaxPolynomialDegreeValueControl.Increment = 1;
-        this.MaxPolynomialDegreeValueControl.Location = new Point(10, 260);
+        this.MaxPolynomialDegreeValueControl.Location = new Point(10, 220);
         this.MaxPolynomialDegreeValueControl.Maximum = 5;
         this.MaxPolynomialDegreeValueControl.Minimum = 0;
         this.MaxPolynomialDegreeValueControl.Value = 2;
         this.Controls.Add(this.MaxPolynomialDegreeValueControl);
 
-        this.PrecisionDigitsLabelControl.Location = new Point(10, 285);
+        this.PrecisionDigitsLabelControl.Location = new Point(10, 240);
         this.PrecisionDigitsLabelControl.Text = "PRECISION DIGITS";
         this.Controls.Add(this.PrecisionDigitsLabelControl);
 
         this.PrecisionDigitsValueControl.Increment = 1;
-        this.PrecisionDigitsValueControl.Location = new Point(10, 310);
+        this.PrecisionDigitsValueControl.Location = new Point(10, 260);
         this.PrecisionDigitsValueControl.Maximum = 5;
         this.PrecisionDigitsValueControl.Minimum = 0;
         this.PrecisionDigitsValueControl.Value = 3;
         this.Controls.Add(this.PrecisionDigitsValueControl);
 
-        this.PopulationSizeLabelControl.Location = new Point(10, 335);
+        this.PopulationSizeLabelControl.Location = new Point(10, 280);
         this.PopulationSizeLabelControl.Text = "POPULATION SIZE";
         this.Controls.Add(this.PopulationSizeLabelControl);
 
         this.PopulationSizeValueControl.Increment = 25;
-        this.PopulationSizeValueControl.Location = new Point(10, 360);
+        this.PopulationSizeValueControl.Location = new Point(10, 300);
         this.PopulationSizeValueControl.Maximum = 800;
         this.PopulationSizeValueControl.Minimum = 200;
         this.PopulationSizeValueControl.Value = 400;
         this.Controls.Add(this.PopulationSizeValueControl);
 
-        this.ParentPoolSizeLabelControl.Location = new Point(10, 385);
+        this.ParentPoolSizeLabelControl.Location = new Point(10, 320);
         this.ParentPoolSizeLabelControl.Text = "PARENT POOL SIZE";
         this.Controls.Add(this.ParentPoolSizeLabelControl);
 
         this.ParentPoolSizeValueControl.Increment = 20;
-        this.ParentPoolSizeValueControl.Location = new Point(10, 410);
+        this.ParentPoolSizeValueControl.Location = new Point(10, 340);
         this.ParentPoolSizeValueControl.Maximum = 200;
         this.ParentPoolSizeValueControl.Minimum = 20;
         this.ParentPoolSizeValueControl.Value = 80;
         this.Controls.Add(this.ParentPoolSizeValueControl);
 
-        this.DominantParentGeneStrengthLabelControl.Location = new Point(10, 435);
+        this.DominantParentGeneStrengthLabelControl.Location = new Point(10, 360);
         this.DominantParentGeneStrengthLabelControl.Text = "DOMINANT PARENT GENE STRENGTH";
         this.Controls.Add(this.DominantParentGeneStrengthLabelControl);
 
         this.DominantParentGeneStrengthValueControl.Increment = 20;
-        this.DominantParentGeneStrengthValueControl.Location = new Point(10, 460);
+        this.DominantParentGeneStrengthValueControl.Location = new Point(10, 380);
         this.DominantParentGeneStrengthValueControl.Maximum = 1000;
         this.DominantParentGeneStrengthValueControl.Minimum = 0;
         this.DominantParentGeneStrengthValueControl.Value = 600;
         this.Controls.Add(this.DominantParentGeneStrengthValueControl);
 
-        this.MutationProbabilityLabelControl.Location = new Point(10, 485);
+        this.MutationProbabilityLabelControl.Location = new Point(10, 400);
         this.MutationProbabilityLabelControl.Text = "MUTATION PROBABILITY";
         this.Controls.Add(this.MutationProbabilityLabelControl);
 
         this.MutationProbabilityValueControl.Increment = 20;
-        this.MutationProbabilityValueControl.Location = new Point(10, 510);
+        this.MutationProbabilityValueControl.Location = new Point(10, 420);
         this.MutationProbabilityValueControl.Maximum = 1000;
         this.MutationProbabilityValueControl.Minimum = 0;
         this.MutationProbabilityValueControl.Value = 100;
         this.Controls.Add(this.MutationProbabilityValueControl);
         
-        // line at y = 545
+        // line at y = 450
 
-        this.ElapsedTimeLabelControl.Location = new Point(10, 555);
+        this.ElapsedTimeLabelControl.Location = new Point(10, 460);
         this.ElapsedTimeLabelControl.Text = "ELAPSED TIME";
         this.Controls.Add(this.ElapsedTimeLabelControl);
 
-        this.ElapsedTimeValueControl.Location = new Point(10, 580);
+        this.ElapsedTimeValueControl.Location = new Point(10, 480);
         this.ElapsedTimeValueControl.Text = "";
         this.Controls.Add(this.ElapsedTimeValueControl);
 
-        this.AverageErrorLabelControl.Location = new Point(10, 605);
+        this.AverageErrorLabelControl.Location = new Point(10, 500);
         this.AverageErrorLabelControl.Text = "AVERAGE ERROR";
         this.Controls.Add(this.AverageErrorLabelControl);
 
-        this.AverageErrorValueControl.Location = new Point(10, 630);
+        this.AverageErrorValueControl.Location = new Point(10, 520);
         this.AverageErrorValueControl.Text = "";
         this.Controls.Add(this.AverageErrorValueControl);
 
-        this.PopulationsCreatedLabelControl.Location = new Point(10, 655);
+        this.PopulationsCreatedLabelControl.Location = new Point(10, 540);
         this.PopulationsCreatedLabelControl.Text = "GENERATIONS EVALUATED";
         this.Controls.Add(this.PopulationsCreatedLabelControl);
 
-        this.PopulationsCreatedValueControl.Location = new Point(10, 680);
+        this.PopulationsCreatedValueControl.Location = new Point(10, 560);
         this.PopulationsCreatedValueControl.Text = "";
         this.Controls.Add(this.PopulationsCreatedValueControl);
 
-        this.LastImprovementLabelControl.Location = new Point(10, 705);
+        this.LastImprovementLabelControl.Location = new Point(10, 580);
         this.LastImprovementLabelControl.Text = "LAST IMPROVEMENT";
         this.Controls.Add(this.LastImprovementLabelControl);
 
-        this.LastImprovementValueControl.Location = new Point(10, 730);
+        this.LastImprovementValueControl.Location = new Point(10, 600);
         this.LastImprovementValueControl.Text = "";
         this.Controls.Add(this.LastImprovementValueControl);
         
-        // line at y = 765
+        // line at y = 630
 
-        this.EngineStatusControl.Location = new Point(10, 775);
-        this.EngineStatusControl.Text = "APPROXIMATION STATUS : STOPPED";
+        this.EngineStatusControl.Location = new Point(10, 640);
+        this.EngineStatusControl.Text = "STATUS : STOPPED";
         this.Controls.Add(this.EngineStatusControl);
 
         this.StartEngineButton.Click += this.StartEngineButtonClick;
-        this.StartEngineButton.Location = new Point(10, 805);
+        this.StartEngineButton.Location = new Point(10, 660);
         this.StartEngineButton.Text = "START";
         this.Controls.Add(this.StartEngineButton);
 
         this.StopEngineButton.Click += this.StopEngineButtonClick;
-        this.StopEngineButton.Location = new Point(190, 805);
+        this.StopEngineButton.Location = new Point(190, 660);
         this.StopEngineButton.Text = "STOP";
         this.Controls.Add(this.StopEngineButton);
 
         this.PauseEngineButton.Click += this.PauseEngineButtonClick;
-        this.PauseEngineButton.Location = new Point(10, 860);
+        this.PauseEngineButton.Location = new Point(10, 710);
         this.PauseEngineButton.Text = "PAUSE";
         this.Controls.Add(this.PauseEngineButton);
         
         this.ResumeEngineButton.Click += this.ResumeEngineButtonClick;
-        this.ResumeEngineButton.Location = new Point(190, 860);
+        this.ResumeEngineButton.Location = new Point(190, 710);
         this.ResumeEngineButton.Text = "RESUME";
         this.Controls.Add(this.ResumeEngineButton);
 
@@ -378,8 +377,7 @@ public class ApproximatorForm: Form
 
     private void StartEngineButtonClick(object? sender, EventArgs args)
     {
-        if (this.ApproximatorEngine.Points == null) this.ShowError("Points not generated!");
-        else if (this.ApproximatorEngine.Running) this.ShowError("Engine is already running!");
+        if (this.ApproximatorEngine.Points == null) MessageBox.Show("Points not generated!", "Error!");
         else
         {
             var emi = (EnumItem) this.ErrorMetricValueControl.SelectedItem;
@@ -396,24 +394,24 @@ public class ApproximatorForm: Form
                 (int) this.PopulationSizeValueControl.Value,
                 (int) this.PrecisionDigitsValueControl.Value
             );
-            if (this.ApproximatorEngine.Start(job)) this.EngineStatusControl.Text = "APPROXIMATION STATUS : RUNNING";
+            if (this.ApproximatorEngine.Start(job)) this.ChangeDisplayedStatus(EngineStatus.RUNNING);
         }
     }
 
     private void StopEngineButtonClick(object? sender, EventArgs args)
     {
         this.ApproximatorEngine.Stop();
-        this.EngineStatusControl.Text = "APPROXIMATION STATUS : STOPPED";
+         this.ChangeDisplayedStatus(EngineStatus.STOPPED);
     }
 
     private void PauseEngineButtonClick(object? sender, EventArgs args)
     {
-        if (this.ApproximatorEngine.Pause()) this.EngineStatusControl.Text = "APPROXIMATION STATUS : PAUSED";
+        if (this.ApproximatorEngine.Pause()) this.ChangeDisplayedStatus(EngineStatus.PAUSED);
     }
     
     private void ResumeEngineButtonClick(object? sender, EventArgs args)
     {
-        if (this.ApproximatorEngine.Resume()) this.EngineStatusControl.Text = "APPROXIMATION STATUS : RUNNING";
+        if (this.ApproximatorEngine.Resume()) this.ChangeDisplayedStatus(EngineStatus.RUNNING);
     }
 
     private static Button NewButton()
@@ -524,10 +522,9 @@ public class ApproximatorForm: Form
         this.Plot3DPictureBox.Refresh();
     }
 
-    private void ShowError(string message)
+    private void ChangeDisplayedStatus(EngineStatus status)
     {
-        const MessageBoxButtons buttons = MessageBoxButtons.OK;
-        MessageBox.Show(message, "ERROR", buttons);
+        this.EngineStatusControl.Text = $"STATUS : {status}";
     }
     
     private readonly struct EnumItem

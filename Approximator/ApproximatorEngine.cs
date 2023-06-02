@@ -7,9 +7,9 @@ namespace Approximator;
 
 public class ApproximatorEngine
 {
-    public bool Paused { get; private set; } = false;
+    private bool Paused { get; set; }
     public Point[]? Points { get; private set; }
-    public bool Running { get; private set; } = false;
+    private bool Running { get; set; }
 
     private Individual? GlobalBestIndividual { get; set; }
     private long LastImprovement { get; set; }
@@ -85,7 +85,7 @@ public class ApproximatorEngine
 
     private static void InitializeStaticFields(ApproximatorJob job)
     {
-        Chromosome.InitialiseChromosomeWhatever(job);
+        Chromosome.InitialiseChromosomeDecogen(job);
         Individual.InitialiseMetric(job);
     }
 
@@ -93,6 +93,7 @@ public class ApproximatorEngine
     {
         this.GlobalBestIndividual = null;
         this.LastImprovement = 0;
+        this.Paused = false;
         this.PopulationsCreated = 0;
         this.Stopwatch.Reset();
     }

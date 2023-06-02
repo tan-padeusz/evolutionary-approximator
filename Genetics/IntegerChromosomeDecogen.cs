@@ -6,7 +6,7 @@ public class IntegerChromosomeDecogen: ChromosomeDecogen
 {
     public IntegerChromosomeDecogen(ApproximatorJob job) : base(job)
     {
-        this.GenesPerFactor = job.PrecisionDigits + 1;
+        this.GenesPerFactor = 1;
     }
 
     public override Gene NewRandomGene()
@@ -14,23 +14,23 @@ public class IntegerChromosomeDecogen: ChromosomeDecogen
         return new IntegerGene();
     }
 
-    public override double[][] Decode(Gene[] genes)
+    public override float[,] Decode(Gene[] genes)
     {
-        var factors = new double[this.MaxPolynomialDegree + 1][];
-        var startingIndex = 0;
-        var precisionValue = Math.Pow(10, -this.PrecisionDigits);
-        for (var degree = 0; degree <= this.MaxPolynomialDegree; degree++)
+        const float step = 0.0001F;
+
+        var factors = new float[this.MaxPolynomialDegree + 1, this.MaxPolynomialDegree + 1];
+        var geneIndex = 0;
+        
+        for (var xPower = 0; xPower <= this.MaxPolynomialDegree; xPower++)
+        for (var yPower = 0; yPower <= this.MaxPolynomialDegree; yPower++)
         {
-            var degreeFactors = new double[degree + 1];
-            for (var yPower = 0; yPower <= degree; yPower++)
-            {
-                var factorGenes = ChromosomeDecogen.GetPart(genes, startingIndex, this.GenesPerFactor);
-                var factor = factorGenes.Sum(gene => ((IntegerGene) gene).Value);
-                degreeFactors[yPower] = Math.Round(factor * precisionValue, this.PrecisionDigits);
-                startingIndex += this.GenesPerFactor;
-            }
-            factors[degree] = degreeFactors;
+            if (xPower + yPower > this.MaxPolynomialDegree) continue;
+
+            var factor = ((IntegerGene) genes[geneIndex]).Value * step;
+            factors[xPower, yPower] = (float) Math.Round(factor, 4);
+            geneIndex++;
         }
+
         return factors;
     }
 }

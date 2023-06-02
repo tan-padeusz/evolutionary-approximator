@@ -6,18 +6,18 @@ namespace Genetics;
 
 public class Chromosome
 {
-    private static ChromosomeDecogen ChromosomeDecogen { get; set; }
+    private static ChromosomeDecogen? ChromosomeDecogen { get; set; }
     private Gene[] Genes { get; }
     private static Random Random { get; } = new Random();
     
     public Chromosome()
     {
-        var whatever = Chromosome.ChromosomeDecogen;
-        var size = whatever.FactorCount * whatever.GenesPerFactor;
+        var decogen = Chromosome.ChromosomeDecogen;
+        var size = decogen!.FactorCount * decogen.GenesPerFactor;
         var genes = new Gene[size];
         
         for (var index = 0; index < size; index++)
-            genes[index] = whatever.NewRandomGene();
+            genes[index] = decogen.NewRandomGene();
         
         this.Genes = genes;
     }
@@ -25,7 +25,7 @@ public class Chromosome
     public Chromosome(ApproximatorJob job, Chromosome dominant, Chromosome recessive)
     {
         var decogen = Chromosome.ChromosomeDecogen;
-        var size = decogen.FactorCount * decogen.GenesPerFactor;
+        var size = decogen!.FactorCount * decogen.GenesPerFactor;
         var genes = new Gene[size];
         
         for (var index = 0; index < size; index++)
@@ -45,12 +45,12 @@ public class Chromosome
         this.Genes = genes;
     }
 
-    public double[][] Decode()
+    public float[,] Decode()
     {
-        return Chromosome.ChromosomeDecogen.Decode(this.Genes);
+        return Chromosome.ChromosomeDecogen!.Decode(this.Genes);
     }
 
-    public static void InitialiseChromosomeWhatever(ApproximatorJob job)
+    public static void InitialiseChromosomeDecogen(ApproximatorJob job)
     {
         Chromosome.ChromosomeDecogen= job.GeneType switch
         {
