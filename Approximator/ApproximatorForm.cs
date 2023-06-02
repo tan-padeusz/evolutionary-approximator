@@ -80,10 +80,6 @@ public class ApproximatorForm: Form
     private PictureBox Plot3DPictureBox { get; } = new PictureBox();
 
     #endregion
-    
-    private static Font ControlFont => new Font(FontFamily.GenericMonospace, 12.5F);
-    private static int ControlHeight => 20;
-    private static int ControlWidth => 300;
     private ApproximatorEngine ApproximatorEngine { get; }
     private Timer UpdateInterfaceTimer { get; } = new Timer();
 
@@ -101,17 +97,17 @@ public class ApproximatorForm: Form
     {
         this.TopHorizontalLine.BackColor = Color.DarkGray;
         this.TopHorizontalLine.Location = new Point(10, 108);
-        this.TopHorizontalLine.Size = new Size(ApproximatorForm.ControlWidth, 5);
+        this.TopHorizontalLine.Size = new Size(300, 5);
         this.Controls.Add(this.TopHorizontalLine);
 
         this.MiddleHorizontalLine.BackColor = Color.DarkGray;
         this.MiddleHorizontalLine.Location = new Point(10, 448);
-        this.MiddleHorizontalLine.Size = new Size(ApproximatorForm.ControlWidth, 5);
+        this.MiddleHorizontalLine.Size = new Size(300, 5);
         this.Controls.Add(this.MiddleHorizontalLine);
 
         this.BottomHorizontalLine.BackColor = Color.DarkGray;
         this.BottomHorizontalLine.Location = new Point(10, 763);
-        this.BottomHorizontalLine.Size = new Size(350, 5);
+        this.BottomHorizontalLine.Size = new Size(300, 5);
         this.Controls.Add(this.BottomHorizontalLine);
 
         this.VerticalLine.BackColor = Color.DarkGray;
@@ -136,7 +132,7 @@ public class ApproximatorForm: Form
         this.GeneratePointsButton.Click += this.GeneratePointsButtonClick;
         this.GeneratePointsButton.Location = new Point(10, 60);
         this.GeneratePointsButton.Text = "GENERATE POINTS";
-        this.GeneratePointsButton.Width = ApproximatorForm.ControlWidth;
+        this.GeneratePointsButton.Width = 300;
         this.Controls.Add(this.GeneratePointsButton);
         
         // line at y = 110
@@ -292,7 +288,7 @@ public class ApproximatorForm: Form
         this.Controls.Add(this.ResumeEngineButton);
 
         this.PointTableControl.BackColor = Color.White;
-        this.PointTableControl.Font = ApproximatorForm.ControlFont;
+        this.PointTableControl.Font = new Font(FontFamily.GenericMonospace, 13F);;
         this.PointTableControl.Location = new Point(420, 10);
         this.PointTableControl.ReadOnly = true;
         this.PointTableControl.Size = new Size(450, 870);
@@ -417,8 +413,8 @@ public class ApproximatorForm: Form
     private static Button NewButton()
     {
         var button = new Button();
-        button.Font = ApproximatorForm.ControlFont;
-        button.Size = new Size(ControlWidth / 2 - 5, 2 * ControlHeight);
+        button.Font = new Font(FontFamily.GenericMonospace, 13F);
+        button.Size = new Size(150, 50);
         button.TextAlign = ContentAlignment.MiddleCenter;
         return button;
     }
@@ -427,16 +423,16 @@ public class ApproximatorForm: Form
     {
         var comboBox = new ComboBox();
         comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-        comboBox.Font = ApproximatorForm.ControlFont;
-        comboBox.Size = new Size(ControlWidth, ControlHeight);
+        comboBox.Font = new Font(FontFamily.GenericMonospace, 13F);
+        comboBox.Size = new Size(300, 30);
         return comboBox;
     }
     
     private static Label NewLabel()
     {
         var label = new Label();
-        label.Font = ApproximatorForm.ControlFont;
-        label.Size = new Size(ControlWidth, ControlHeight);
+        label.Font = new Font(FontFamily.GenericMonospace, 13F);
+        label.Size = new Size(300, 30);
         label.TextAlign = ContentAlignment.MiddleCenter;
         return label;
     }
@@ -444,8 +440,8 @@ public class ApproximatorForm: Form
     private static NumericUpDown NewNumericUpDown()
     {
         var numericUpDown = new NumericUpDown();
-        numericUpDown.Font = ApproximatorForm.ControlFont;
-        numericUpDown.Size = new Size(ControlWidth, ControlHeight);
+        numericUpDown.Font = new Font(FontFamily.GenericMonospace, 13F);
+        numericUpDown.Size = new Size(300, 30);
         numericUpDown.TextAlign = HorizontalAlignment.Center;
         return numericUpDown;
     }
