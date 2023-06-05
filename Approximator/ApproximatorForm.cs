@@ -116,6 +116,13 @@ public class ApproximatorForm: Form
         this.Controls.Add(this.VerticalLine);
     }
 
+    private void ConfigurePointControls()
+    {
+        this.PointNumberLabelControl.Location = new Point(10, 10);
+        this.PointNumberLabelControl.Text = "POINT NUMBER";
+        this.Controls.Add(this.PointNumberLabelControl);
+    }
+
     private void ConfigureInputOutputControls()
     {
         this.PointNumberLabelControl.Location = new Point(10, 10);
