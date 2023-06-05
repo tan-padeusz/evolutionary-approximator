@@ -16,15 +16,15 @@ public class ApproximatorEngine
     private long PopulationsCreated { get; set; }
     private Stopwatch Stopwatch { get; } = new Stopwatch();
 
-    public Point[] GeneratePoints(int pointNumber, int precisionDigits)
+    public Point[] GeneratePoints(int pointNumber)
     {
         var points = new Point[pointNumber];
         var random = new Random();
         for (var index = 0; index < pointNumber; index++)
         {
-            var x = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
-            var y = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
-            var z = Math.Round(random.NextDouble() * 20 - 10, precisionDigits);
+            var x = random.NextDouble() * 20 - 10;
+            var y = random.NextDouble() * 20 - 10;
+            var z = random.NextDouble() * 20 - 10;
             points[index] = new Point(x, y, z);
         }
         this.Points = points;
