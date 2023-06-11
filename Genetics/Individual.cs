@@ -42,13 +42,13 @@ public class Individual
             if (xPower + yPower >= this.Factors.GetLength(1)) continue;
             result += this.Factors[xPower, yPower] * Math.Pow(x, xPower) * Math.Pow(y, yPower);
         }
-        return Math.Round(result, 4);
+        return result;
     }
     
     private double EvaluateError(Point[] points)
     {
         var error = points.Sum(point => Individual.Metric(point.Z, this.CalculateFunctionResult(point.X, point.Y)));
-        return Math.Round(Individual.ReversedMetric(error / points.Length), this.PrecisionDigits);
+        return Individual.ReversedMetric(error / points.Length);
     }
 
     public bool IsWorseThan(Individual other)
